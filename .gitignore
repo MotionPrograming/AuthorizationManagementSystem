@@ -1,0 +1,20 @@
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Java
+*.class
+
+# Build
+build/
+target/
+
+# Logs
+*.log
+
+# Tomcat
+Servers/
+
+# OS
+.DS_Store
