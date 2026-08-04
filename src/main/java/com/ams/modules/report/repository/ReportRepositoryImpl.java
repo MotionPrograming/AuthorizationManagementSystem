@@ -1,1 +1,0 @@
-//Oracle/JDBC impl — AUDIT_LOG  theke query korbe)
