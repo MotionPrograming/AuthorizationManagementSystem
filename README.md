@@ -1,4 +1,3 @@
-````markdown
 # 🔐 Authorization Management System (AMS)
 
 A professional **Identity and Access Management (IAM) platform** built with **Java Servlet, JSP, JDBC, and MySQL**.
@@ -67,7 +66,6 @@ Features:
 - Assign permissions to roles
 - Manage role-based access
 
-
 Example:
 
 ```text
@@ -90,7 +88,7 @@ Employee
 
  |
  └── Assigned Resource Access
-````
+```
 
 ---
 
@@ -100,11 +98,11 @@ Provides fine-grained authorization.
 
 Features:
 
-* Create permissions
-* Update permissions
-* Delete permissions
-* Assign permissions to roles
-* Permission validation
+- Create permissions
+- Update permissions
+- Delete permissions
+- Assign permissions to roles
+- Permission validation
 
 Example:
 
@@ -128,10 +126,10 @@ Provides controlled access workflow.
 
 Features:
 
-* Submit access requests
-* Track request status
-* Request additional permissions
-* Temporary access management
+- Submit access requests
+- Track request status
+- Request additional permissions
+- Temporary access management
 
 Workflow:
 
@@ -163,10 +161,10 @@ Supports approval-based access management.
 
 Features:
 
-* Approve requests
-* Reject requests
-* Approval history
-* Multi-level approval support
+- Approve requests
+- Reject requests
+- Approval history
+- Multi-level approval support
 
 ---
 
@@ -176,11 +174,11 @@ Tracks important security activities.
 
 Tracks:
 
-* Login activities
-* Permission changes
-* Role changes
-* Access requests
-* Approval actions
+- Login activities
+- Permission changes
+- Role changes
+- Access requests
+- Approval actions
 
 Example:
 
@@ -204,10 +202,10 @@ Successful
 
 Provides:
 
-* User access reports
-* Role reports
-* Permission reports
-* Audit reports
+- User access reports
+- Role reports
+- Permission reports
+- Audit reports
 
 ---
 
@@ -252,10 +250,10 @@ Admin
 
 Organizations can manage:
 
-* Employee accounts
-* Department access
-* Internal applications
-* Security policies
+- Employee accounts
+- Department access
+- Internal applications
+- Security policies
 
 ---
 
@@ -318,21 +316,21 @@ Authorization Management System follows a **Feature-Based Layered Architecture**
 
 The system is divided into:
 
-* Presentation Layer
-* Controller Layer
-* Service Layer
-* Repository Layer
-* Security Layer
-* Database Layer
+- Presentation Layer
+- Controller Layer
+- Service Layer
+- Repository Layer
+- Security Layer
+- Database Layer
 
 Design principles:
 
-* Separation of Concerns
-* Single Responsibility Principle
-* Repository Pattern
-* DTO Pattern
-* Mapper Pattern
-* RBAC Pattern
+- Separation of Concerns
+- Single Responsibility Principle
+- Repository Pattern
+- DTO Pattern
+- Mapper Pattern
+- RBAC Pattern
 
 ---
 
@@ -454,7 +452,6 @@ Module
 └── Validator
 ```
 
-````markdown id="7m0v3h"
 ---
 
 # 🔐 Security Design
@@ -504,7 +501,7 @@ AuthService --> PasswordEncoder
 AuthService --> Session
 
 Session --> User
-````
+```
 
 ---
 
@@ -803,34 +800,34 @@ com.ams
 
 ## Backend
 
-* Java
-* Servlet API
-* JSP
-* JDBC
+- Java
+- Servlet API
+- JSP
+- JDBC
 
 ## Database
 
-* MySQL
+- MySQL
 
 ## Frontend
 
-* HTML
-* CSS
-* JavaScript
-* Bootstrap
+- HTML
+- CSS
+- JavaScript
+- Bootstrap
 
 ## Security
 
-* BCrypt Password Hashing
-* Session Authentication
-* RBAC Authorization
+- BCrypt Password Hashing
+- Session Authentication
+- RBAC Authorization
 
 ## Tools
 
-* Eclipse IDE
-* Apache Tomcat
-* Git
-* Maven
+- Eclipse IDE
+- Apache Tomcat
+- Git
+- Maven
 
 ---
 
@@ -902,14 +899,14 @@ http://localhost:8080/AuthorizationManagementSystem
 
 This project follows:
 
-* SOLID Principles
-* Clean Code Practices
-* Separation of Concerns
-* Repository Pattern
-* DTO Pattern
-* Mapper Pattern
-* Layered Architecture
-* RBAC Pattern
+- SOLID Principles
+- Clean Code Practices
+- Separation of Concerns
+- Repository Pattern
+- DTO Pattern
+- Mapper Pattern
+- Layered Architecture
+- RBAC Pattern
 
 ---
 
@@ -919,16 +916,16 @@ AMS is designed to evolve into a complete enterprise IAM platform.
 
 Future improvements:
 
-* REST API Support
-* JWT Authentication
-* OAuth2 Integration
-* Spring Boot Migration
-* Microservices Architecture
-* Redis Session Management
-* Email Notification Service
-* Multi-Tenant SaaS Architecture
-* Cloud Deployment
-* API Gateway Authorization
+- REST API Support
+- JWT Authentication
+- OAuth2 Integration
+- Spring Boot Migration
+- Microservices Architecture
+- Redis Session Management
+- Email Notification Service
+- Multi-Tenant SaaS Architecture
+- Cloud Deployment
+- API Gateway Authorization
 
 Future Architecture:
 
@@ -984,13 +981,13 @@ AuditService --> Database
 
 The architecture focuses on:
 
-* Secure identity management
-* Fine-grained authorization
-* Modular development
-* Easy maintenance
-* Enterprise scalability
-* Reusable IAM solution
-* Future microservice migration
+- Secure identity management
+- Fine-grained authorization
+- Modular development
+- Easy maintenance
+- Enterprise scalability
+- Reusable IAM solution
+- Future microservice migration
 
 ---
 
@@ -1002,18 +999,15 @@ Backend Software Engineer
 
 Interested in:
 
-* Java
-* C#
-* ASP.NET Core
-* Microservices
-* Software Architecture
-* Database Design
+- Java
+- C#
+- ASP.NET Core
+- Microservices
+- Software Architecture
+- Database Design
 
 ---
 
 # 📄 License
 
 This project is developed for educational purposes and software engineering practice.
-
-```
-
