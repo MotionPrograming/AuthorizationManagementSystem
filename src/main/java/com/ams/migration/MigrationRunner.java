@@ -2,165 +2,201 @@ package com.ams.migration;
 
 import com.ams.config.DBConnection;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets; 
-import java.sql.*;
-import java.util.stream.Collectors;
+import java.sql.Connection;
+import java.util.Collections;
+import java.util.List;
+
 
 public class MigrationRunner {
 
-    private static final String[] MIGRATIONS = {
-        "V001__create_users",
-        "V002__create_roles",
-        "V003__create_permissions",
-        "V004__create_user_roles",
-        "V005__create_role_permissions",
-        "V006__create_access_request",
-        "V007__create_approval",
-        "V008__create_user_sessions", 
-        "V009__create_password_reset_token",
-        "V010__create_audit_log"
-    };
 
-    
-    // =========================
-    // RUN MIGRATION UP
-    // =========================
+    private final MigrationScanner scanner;
+
+    private final MigrationValidator validator;
+
+    private final MigrationExecutor executor;
+
+    private final MigrationHistoryRepository historyRepository;
+
+
+
+    public MigrationRunner() {
+
+
+        this.scanner =
+                new MigrationScanner();
+
+
+        this.validator =
+                new MigrationValidator();
+
+
+        this.executor =
+                new MigrationExecutor();
+
+
+        this.historyRepository =
+                new MigrationHistoryRepository();
+
+    }
+
+
+
+    // =================================
+    // MIGRATE UP
+    // =================================
+
     public void migrate() throws Exception {
 
-        try (Connection conn = DBConnection.getConnection()) {
 
-            conn.setAutoCommit(false);
-            // Create migration tracking table
-            try (Statement stmt = conn.createStatement()) {
-                stmt.execute("""
-                    BEGIN
-                        EXECUTE IMMEDIATE '
-                        CREATE TABLE schema_migrations (
-                            version VARCHAR2(50) PRIMARY KEY,
-                            applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                        )';
-                    EXCEPTION
-                        WHEN OTHERS THEN
-                            IF SQLCODE != -955 THEN
-                                RAISE;
-                            END IF;
-                    END;
-                """);
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
-            }
+        try(Connection connection =
+                DBConnection.getConnection()) {
 
-            try (PreparedStatement insertPs = conn.prepareStatement("INSERT INTO schema_migrations(version) VALUES (?)")) {
-                for (String name : MIGRATIONS) {
-                    if (isApplied(conn, name)) {
-                        System.out.println("[SKIP] " + name);
-                        continue;
-                    }
-                    
-                    System.out.println("[START] " + name);
-                    String sqlFile = "db/migration/" + name + ".up.sql";
-                    String rawSql = readFile(sqlFile);
-                    
-                    executeSql(conn, rawSql);
-                    
-                    insertPs.setString(1, name);
-                    insertPs.executeUpdate();
-                    conn.commit();
-                    
-                    System.out.println("[DONE] " + name);
-                }
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
-            }
+
+            connection.setAutoCommit(false);
+
+
+
+            List<Migration> migrations =
+                    scanner.scan();
+
+
+
+            validator.validate(
+                    migrations);
+
+
+
+            executor.execute(
+                    connection,
+                    migrations);
+
+
+
+            System.out.println(
+                    "\nMigration completed successfully.");
+
         }
+
     }
 
-    // =========================
-    // RUN ROLLBACK DOWN
-    // =========================
+
+
+    // =================================
+    // ROLLBACK LAST MIGRATION
+    // =================================
+
+
     public void rollback() throws Exception {
 
-        try (Connection conn = DBConnection.getConnection()) {
 
-            conn.setAutoCommit(false);
-            
-            for (int i = MIGRATIONS.length - 1; i >= 0; i--) {
-                String name = MIGRATIONS[i];
-                if (!isApplied(conn, name)) {
-                    continue;
+        try(Connection connection =
+                DBConnection.getConnection()) {
+
+
+            connection.setAutoCommit(false);
+
+
+
+            List<Migration> migrations =
+                    scanner.scan();
+
+
+
+            Collections.reverse(
+                    migrations);
+
+
+
+            for(Migration migration : migrations){
+
+
+                if(historyRepository
+                        .isApplied(
+                            connection,
+                            migration.getVersion())){
+
+
+                    executor.rollback(
+                            connection,
+                            migration);
+
+
+                    break;
+
                 }
-                
-                String path = "db/migration/" + name + ".down.sql";
-                InputStream check = getClass().getClassLoader().getResourceAsStream(path);
-                
-                if (check == null) {
-                    System.out.println("[SKIP] No down migration: " + name);
-                    continue;
-                }
-                
-                System.out.println("[ROLLBACK] " + name);
-                String rawSql = readFile(path);
-                executeSql(conn, rawSql);
-                
-                try (PreparedStatement ps = conn.prepareStatement("DELETE FROM schema_migrations WHERE version=?")) {
-                    ps.setString(1, name);
-                    ps.executeUpdate();
-                }
-                
-                conn.commit();
-                System.out.println("[DONE ROLLBACK] " + name);
+
             }
+
+
+            System.out.println(
+                    "\nRollback completed.");
+
         }
+
     }
 
-    // =========================
-    // Execute SQL statements
-    // =========================
-    private void executeSql(Connection conn, String sql) throws SQLException {
-        String cleaned = removeComments(sql);
-        String[] statements = cleaned.split(";(?=(?:[^']*'[^']*')*[^']*$)");
-        
-        try (Statement stmt = conn.createStatement()) {
-            for (String query : statements) {
-                String trimmed = query.trim();
-                if (!trimmed.isEmpty()) {
-                    stmt.execute(trimmed);
-                }
+
+
+    // =================================
+    // STATUS
+    // =================================
+
+
+    public void status() throws Exception {
+
+
+        try(Connection connection =
+                DBConnection.getConnection()) {
+
+
+
+            List<String> applied =
+                    historyRepository
+                    .findAll(connection);
+
+
+
+            System.out.println(
+                    "\nMigration Status");
+
+            System.out.println(
+                    "------------------------");
+
+
+
+            for(String version : applied){
+
+
+                System.out.println(
+                        version
+                        + "  [APPLIED]");
+
             }
+
         }
+
     }
 
-    // Remove SQL comments
-    private String removeComments(String sql) {
-        return sql.replaceAll("(?m)^\\s*--.*$", "")
-                  .replaceAll("--.*", "")
-                  .replaceAll("/\\*(?s).*?\\*/", "");
+
+
+    // =================================
+    // VALIDATE
+    // =================================
+
+
+    public void validate() throws Exception {
+
+
+        List<Migration> migrations =
+                scanner.scan();
+
+
+
+        validator.validate(
+                migrations);
+
+
     }
 
-    // Check migration already applied
-    private boolean isApplied(Connection conn, String version) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement("SELECT 1 FROM schema_migrations WHERE version=?")) {
-            ps.setString(1, version);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
-        }
-    }
-
-    // Read SQL file
-    private String readFile(String path) throws Exception {
-        InputStream is = getClass().getClassLoader().getResourceAsStream(path);
-        if (is == null) {
-            throw new RuntimeException("File not found: " + path);
-        }
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-            return reader.lines().collect(Collectors.joining("\n"));
-        }
-    }
 }
