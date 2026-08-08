@@ -9,7 +9,7 @@ public final class CommonValidator {
 	}
 
 	public static void validateRequired(String value, String fieldName) {
-		ValidationUtil.requiredNotBlank(value, fieldName);
+		ValidationUtil.requireNotBlank(value, fieldName);
 	}
 
 	public static void validateLength(String value, String fieldName, int min, int max) {
