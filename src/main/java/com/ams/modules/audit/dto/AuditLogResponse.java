@@ -1,8 +1,8 @@
-package com.ams.modules.audit.entity;
+package com.ams.modules.audit.dto;
 
 import java.time.LocalDateTime;
 
-public class AuditLog {
+public class AuditLogResponse {
 	private Long auditId;
 	private Long userId;
 	private String action;
@@ -10,10 +10,7 @@ public class AuditLog {
 	private String ipAddress;
 	private LocalDateTime createdAt;
 
-	public AuditLog() {
-	}
-
-	public AuditLog(Long auditId, Long userId, String action, String description, String ipAddress,
+	public AuditLogResponse(Long auditId, Long userId, String action, String description, String ipAddress,
 			LocalDateTime createdAt) {
 		this.auditId = auditId;
 		this.userId = userId;
@@ -27,47 +24,23 @@ public class AuditLog {
 		return auditId;
 	}
 
-	public void setAuditId(Long auditId) {
-		this.auditId = auditId;
-	}
-
 	public Long getUserId() {
 		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
 	}
 
 	public String getAction() {
 		return action;
 	}
 
-	public void setAction(String action) {
-		this.action = action;
-	}
-
 	public String getDescription() {
 		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getIpAddress() {
 		return ipAddress;
 	}
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
-
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
 	}
 }
