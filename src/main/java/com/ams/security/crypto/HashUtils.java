@@ -1,0 +1,1 @@
+//<-- SHA-256 for Hashing (Data integrity / Passwords)
