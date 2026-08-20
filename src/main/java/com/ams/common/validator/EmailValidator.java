@@ -1,9 +1,9 @@
 package com.ams.common.validator;
 
-import com.ams.common.constant.MessageConstants;
+import java.util.regex.Pattern;
+
 import com.ams.common.exception.ValidationException;
 import com.ams.common.util.StringUtil;
-import java.util.regex.Pattern;
 
 public final class EmailValidator {
 
@@ -17,7 +17,6 @@ public final class EmailValidator {
 		if (StringUtil.isBlank(email)) {
 			return false;
 		}
-
 		return EMAIL_PATTERN.matcher(email.trim()).matches();
 	}
 

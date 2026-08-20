@@ -1,6 +1,5 @@
 package com.ams.common.validator;
 
-import com.ams.common.constant.MessageConstants;
 import com.ams.common.exception.ValidationException;
 import com.ams.common.util.StringUtil;
 
