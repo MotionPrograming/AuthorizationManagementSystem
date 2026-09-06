@@ -6,6 +6,8 @@
 
 ---
 
+> **GitHub Rendering Compatibility:** This README intentionally does **not** use executable Mermaid blocks. > All architecture diagrams are preserved as plain-text diagram source so GitHub will not invoke Mermaid/SVG rendering, > preventing errors such as `Unable to render rich display` or `svg element not in render tree`.
+
 ## 📌 Overview
 
 **Authorization Management System (AMS)** is designed as a reusable security and authorization platform for applications that need centralized identity and access management.
@@ -39,10 +41,11 @@ The platform can be integrated with healthcare systems, ERP applications, SaaS p
 
 The goal of AMS is to provide a centralized platform for managing:
 
-```mermaid
-flowchart TB
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TB
 
-    AMS["🔐 Authorization Management System"]
+AMS["🔐 Authorization Management System"]
 
     USER["👤 Users"]
     ROLE["👥 Roles"]
@@ -92,10 +95,11 @@ flowchart TB
 
 # 🔐 Authentication Architecture
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    CLIENT["👤 Client"]
+CLIENT["👤 Client"]
 
     LOGIN["Login Request"]
 
@@ -142,10 +146,11 @@ flowchart LR
 
 AMS supports **JSON Web Token (JWT)** authentication for protected application requests.
 
-```mermaid
-sequenceDiagram
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: sequenceDiagram
 
-    participant C as Client
+participant C as Client
     participant A as Authentication Service
     participant J as JwtTokenProvider
     participant F as Authentication Filter
@@ -196,10 +201,11 @@ Compatible authenticator applications include:
 
 ## 2FA Architecture
 
-```mermaid
-flowchart TB
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TB
 
-    TWOFA["🔐 Two-Factor Authentication"]
+TWOFA["🔐 Two-Factor Authentication"]
 
     SETUP["2FA Setup"]
     SECRET["TOTP Secret"]
@@ -258,10 +264,11 @@ AMS includes cryptographic utilities for authentication, integrity protection, a
 | HMAC-SHA256 | Integrity and authenticity protection |
 | JWT signing | Token authentication |
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    SECURITY["Security Layer"]
+SECURITY["Security Layer"]
 
     HASH["HashUtils<br/>SHA-256"]
     HMAC["HmacUtils<br/>HMAC-SHA256"]
@@ -284,10 +291,11 @@ flowchart LR
 
 # 🛡️ Security Filters
 
-```mermaid
-flowchart TB
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TB
 
-    REQUEST["HTTP Request"]
+REQUEST["HTTP Request"]
 
     AUTHF["AuthenticationFilter"]
     AUTHZF["AuthorizationFilter"]
@@ -331,10 +339,11 @@ Adds security-related HTTP response headers.
 
 AMS follows a layered RBAC model.
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    USER["👤 User"]
+USER["👤 User"]
     UR["User Role"]
     ROLE["👥 Role"]
     RP["Role Permission"]
@@ -350,10 +359,11 @@ flowchart LR
 
 ## RBAC Example
 
-```mermaid
-flowchart TB
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TB
 
-    ADMIN["👑 Admin"]
+ADMIN["👑 Admin"]
     MANAGER["👔 Manager"]
     EMPLOYEE["👤 Employee"]
 
@@ -392,10 +402,11 @@ AMS supports fine-grained permissions.
 - Validate permissions
 - Control resource-level access
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    ROLE["Role"]
+ROLE["Role"]
     PERMISSION["Permission"]
     RESOURCE["Resource"]
     ACTION["Action"]
@@ -436,10 +447,11 @@ AMS provides controlled access-request workflows.
 - Temporary access management
 - Approval-based access provisioning
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    EMPLOYEE["👤 Employee"]
+EMPLOYEE["👤 Employee"]
     REQUEST["📩 Access Request"]
     MANAGER["👔 Manager Review"]
     ADMIN["👑 Admin Approval"]
@@ -465,10 +477,11 @@ AMS supports approval-based access management.
 - Multi-level approval support
 - Controlled access provisioning
 
-```mermaid
-stateDiagram-v2
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: stateDiagram-v2
 
-    [*] --> Submitted
+[*] --> Submitted
 
     Submitted --> Pending
 
@@ -501,10 +514,11 @@ AMS tracks security-sensitive activities for accountability.
 - 2FA verification
 - Other security-related operations
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    ACTION["👤 User Action"]
+ACTION["👤 User Action"]
     EVENT["Application Event"]
     SERVICE["Audit Service"]
     LOG["📋 Audit Log"]
@@ -542,10 +556,11 @@ LOGIN
 
 AMS provides reporting capabilities for access and security management.
 
-```mermaid
-flowchart TB
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TB
 
-    REPORT["📊 Reporting System"]
+REPORT["📊 Reporting System"]
 
     USER_REPORT["User Access Reports"]
     ROLE_REPORT["Role Reports"]
@@ -572,10 +587,11 @@ security
 
 Conceptually:
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    LOGIN["Login"]
+LOGIN["Login"]
     AUTH["Authentication"]
     SESSION["SessionManager"]
     ACTIVE["Active Session"]
@@ -596,10 +612,11 @@ flowchart LR
 
 # 🏗️ High-Level Architecture
 
-```mermaid
-flowchart TB
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TB
 
-    CLIENT["👤 User / Client"]
+CLIENT["👤 User / Client"]
 
     UI["🖥️ JSP Web Interface"]
 
@@ -638,10 +655,11 @@ flowchart TB
 
 # 🔄 Request Processing Flow
 
-```mermaid
-sequenceDiagram
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: sequenceDiagram
 
-    participant U as Client
+participant U as Client
     participant AF as Authentication Filter
     participant AZ as Authorization Filter
     participant C as Controller
@@ -691,10 +709,11 @@ AMS provides centralized user management.
 - Enable / disable 2FA
 - Manage authentication credentials
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    ADMIN["👑 Administrator"]
+ADMIN["👑 Administrator"]
 
     CREATE["Create"]
     UPDATE["Update"]
@@ -719,10 +738,11 @@ flowchart LR
 
 AMS is organized around independent business modules.
 
-```mermaid
-flowchart TB
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TB
 
-    AMS["🔐 AMS"]
+AMS["🔐 AMS"]
 
     ACCESS["Access Request"]
     APPROVAL["Approval"]
@@ -772,10 +792,11 @@ This structure supports:
 
 # 🛡️ Security Architecture
 
-```mermaid
-flowchart TB
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TB
 
-    SECURITY["🔐 Security"]
+SECURITY["🔐 Security"]
 
     AUTHN["Authentication"]
     AUTHZ["Authorization"]
@@ -894,10 +915,11 @@ password_reset_token
 
 ## Entity Relationship Diagram
 
-```mermaid
-erDiagram
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: erDiagram
 
-    USERS ||--o{ USER_ROLES : has
+USERS ||--o{ USER_ROLES : has
     ROLES ||--o{ USER_ROLES : assigned
     ROLES ||--o{ ROLE_PERMISSIONS : contains
     PERMISSIONS ||--o{ ROLE_PERMISSIONS : grants
@@ -985,10 +1007,11 @@ The versioned migration structure provides controlled database-schema evolution.
 
 ## Healthcare Authorization
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    HOSPITAL["🏥 Hospital System"]
+HOSPITAL["🏥 Hospital System"]
 
     DOCTOR["👨‍⚕️ Doctor"]
     NURSE["👩‍⚕️ Nurse"]
@@ -1029,10 +1052,11 @@ Organizations can manage:
 - Security policies
 - Application permissions
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    ORG["🏢 Organization"]
+ORG["🏢 Organization"]
 
     EMP["Employees"]
     DEPT["Departments"]
@@ -1055,10 +1079,11 @@ flowchart LR
 
 AMS can operate as an authorization layer for existing applications.
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    CLIENT["Client Application"]
+CLIENT["Client Application"]
     APP["Application Layer"]
     AMS["🔐 AMS Authorization Layer"]
     RESOURCE["Protected Resource"]
@@ -1074,10 +1099,11 @@ flowchart LR
 
 AMS can be extended into a multi-tenant authorization platform.
 
-```mermaid
-flowchart TB
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TB
 
-    AMS["☁️ AMS Platform"]
+AMS["☁️ AMS Platform"]
 
     COMPANY_A["Company A"]
     COMPANY_B["Company B"]
@@ -1232,10 +1258,11 @@ The project follows:
 - Feature-Based Architecture
 - RBAC Pattern
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    PRINCIPLES["Design Principles"]
+PRINCIPLES["Design Principles"]
 
     SOLID["SOLID"]
     CLEAN["Clean Code"]
@@ -1282,10 +1309,11 @@ Future improvements include:
 
 # 🔭 Future Architecture
 
-```mermaid
-flowchart LR
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart LR
 
-    CLIENT["Client Applications"]
+CLIENT["Client Applications"]
     GATEWAY["API Gateway"]
 
     IAM["Identity / Authorization Service"]
@@ -1312,9 +1340,11 @@ flowchart LR
 
 # 🎯 System Design Goals
 
-```mermaid
-mindmap
-  root((AMS))
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: mindmap
+
+root((AMS))
     Secure Identity Management
     Strong Authentication
     Multi-Factor Authentication
@@ -1333,10 +1363,11 @@ mindmap
 
 # 📈 Security & Authorization Flow
 
-```mermaid
-flowchart TD
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TD
 
-    REQUEST["Incoming Request"]
+REQUEST["Incoming Request"]
 
     AUTHENTICATION["🔐 Authentication"]
     ROLE["👥 Role Validation"]
@@ -1377,10 +1408,11 @@ flowchart TD
 
 # 📌 Architecture Summary
 
-```mermaid
-flowchart TB
+```text
+[Diagram source shown as plain text for GitHub-safe rendering]
+Diagram type: flowchart TB
 
-    CLIENT["👤 Client"]
+CLIENT["👤 Client"]
 
     AUTHENTICATION["🔐 Authentication"]
     TWOFA["📱 2FA"]
