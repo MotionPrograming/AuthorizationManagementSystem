@@ -16,4 +16,6 @@ public interface UserService {
 	boolean updateUser(Long id, UpdateUserRequest request);
 
 	boolean deleteUser(Long id);
+
+	void assignRoleToUser(Long userId, Long roleId);
 }

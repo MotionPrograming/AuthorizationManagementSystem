@@ -8,6 +8,7 @@ import com.ams.modules.auth.repository.impl.AuthRepositoryImpl;
 import com.ams.modules.auth.service.AuthService;
 import com.ams.modules.auth.service.impl.AuthServiceImpl;
 import com.ams.modules.auth.validator.AuthValidator;
+import com.ams.modules.user.repository.impl.UserRepositoryImpl; // Import UserRepositoryImpl
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,8 +24,8 @@ public class AuthController extends HttpServlet {
 
 	@Override
 	public void init() throws ServletException {
-
-		this.authService = new AuthServiceImpl(new AuthRepositoryImpl(), null, new AuthValidator());
+		// null এর জায়গায় UserRepositoryImpl এর অবজেক্ট পাস করা হলো
+		this.authService = new AuthServiceImpl(new AuthRepositoryImpl(), new UserRepositoryImpl(), new AuthValidator());
 	}
 
 	@Override

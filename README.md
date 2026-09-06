@@ -1,34 +1,69 @@
 # 🔐 Authorization Management System (AMS)
 
-A professional **Identity and Access Management (IAM) and Authorization platform** built with **Java Servlet, JSP, JDBC, and MySQL**.
+> **Enterprise-oriented Identity, Authentication & Authorization Platform**
+>
+> A modular Java-based Authorization Management System built with **Java Servlet, JSP, JDBC, and MySQL**, providing authentication, JWT, session security, TOTP-based 2FA, RBAC, fine-grained permissions, access-request workflows, approval management, audit logging, and reporting.
 
-Authorization Management System (AMS) provides secure authentication, Two-Factor Authentication (2FA), JWT-based authentication, Role-Based Access Control (RBAC), fine-grained permission management, access request workflow, approval process, and security audit tracking for enterprise-oriented applications.
+---
 
-The system is designed as a reusable authorization platform that can be integrated with:
+## 📌 Overview
 
-- 🏥 Healthcare Systems
-- 🏢 ERP Applications
-- ☁️ SaaS Platforms
-- 💻 Enterprise Applications
-- 🏭 Internal Management Systems
+**Authorization Management System (AMS)** is designed as a reusable security and authorization platform for applications that need centralized identity and access management.
+
+It brings together:
+
+- 🔑 Authentication
+- 🎟️ JWT-based authentication
+- 🛡️ Authorization
+- 👥 Role-Based Access Control (RBAC)
+- 🔐 Two-Factor Authentication (2FA)
+- 📱 TOTP verification
+- 🔑 Backup-code recovery
+- 👤 User management
+- 🧩 Fine-grained permission management
+- 📩 Access-request workflows
+- ✅ Approval workflows
+- 📋 Security auditing
+- 📊 Reporting
+- 🔒 Session management
+- 🚦 Rate limiting
+- 🌐 CORS protection
+- 🛡️ Security headers
+- 🔏 Cryptographic utilities
+
+The platform can be integrated with healthcare systems, ERP applications, SaaS platforms, enterprise applications, and internal management systems.
 
 ---
 
 # 🚀 Project Vision
 
-The goal of AMS is to build a centralized authorization platform where organizations can securely manage:
+The goal of AMS is to provide a centralized platform for managing:
 
-- Users
-- Roles
-- Permissions
-- Application Access
-- Authentication
-- Authorization
-- Access Requests
-- Approval Workflows
-- Security Auditing
+```mermaid
+flowchart TB
 
-AMS combines **identity management, authentication, authorization, RBAC, access governance, and security auditing** into a modular enterprise-oriented platform.
+    AMS["🔐 Authorization Management System"]
+
+    USER["👤 Users"]
+    ROLE["👥 Roles"]
+    PERM["🔑 Permissions"]
+    AUTHN["🔐 Authentication"]
+    AUTHZ["🛡️ Authorization"]
+    ACCESS["📩 Access Requests"]
+    APPROVAL["✅ Approval Workflows"]
+    AUDIT["📋 Security Auditing"]
+    REPORT["📊 Reporting"]
+
+    AMS --> USER
+    AMS --> ROLE
+    AMS --> PERM
+    AMS --> AUTHN
+    AMS --> AUTHZ
+    AMS --> ACCESS
+    AMS --> APPROVAL
+    AMS --> AUDIT
+    AMS --> REPORT
+```
 
 ---
 
@@ -36,138 +71,99 @@ AMS combines **identity management, authentication, authorization, RBAC, access 
 
 ## 🔑 Authentication & Security
 
-AMS provides multiple security mechanisms for protecting user accounts and application resources.
-
 - Secure user authentication
 - BCrypt password hashing
 - Session-based authentication
 - JWT authentication
-- Authentication Filter
-- Authorization Filter
+- Authentication filter
+- Authorization filter
 - Password management
-- Role-Based Access Control (RBAC)
-- Two-Factor Authentication (2FA)
-- TOTP-based verification
+- Role-Based Access Control
+- TOTP-based 2FA
+- Backup-code recovery
 - CORS protection
 - Rate limiting
 - Security headers
-- Cryptographic hashing
+- SHA-256 hashing
 - HMAC-SHA256 integrity protection
 - Secure session management
 
 ---
 
-# 🔐 Two-Factor Authentication (2FA)
-
-AMS supports **Time-based One-Time Password (TOTP)** based Two-Factor Authentication.
-
-Users can use compatible authenticator applications such as:
-
-- Google Authenticator
-- Authy
-- Other TOTP-compatible authenticator applications
-
-## Authentication & 2FA Flow
+# 🔐 Authentication Architecture
 
 ```mermaid
-flowchart TD
+flowchart LR
 
-    A[User] --> B[Login Request]
+    CLIENT["👤 Client"]
 
-    B --> C[Authentication Service]
+    LOGIN["Login Request"]
 
-    C --> D[Validate Username & Password]
+    AUTH["Authentication Service"]
 
-    D --> E{2FA Enabled?}
+    CRED["Validate Username<br/>and Password"]
 
-    E -->|No| F[Create Session / JWT]
+    CHECK{"2FA Enabled?"}
 
-    E -->|Yes| G[TOTP Code Verification]
+    SESSION["Create Session"]
+    JWT["Generate JWT"]
 
-    G --> H{Valid?}
+    TOTP["Verify TOTP"]
+    BACKUP["Verify Backup Code"]
 
-    H -->|Yes| F
-    H -->|No| I[Access Denied]
+    ACCESS["✅ Authenticated Access"]
+    DENIED["❌ Access Denied"]
 
-    F --> J[Authenticated Access]
-````
+    CLIENT --> LOGIN
+    LOGIN --> AUTH
+    AUTH --> CRED
+    CRED --> CHECK
 
-### 2FA Components
+    CHECK -->|No| SESSION
+    CHECK -->|No| JWT
 
-```text
-security
-└── twofactor
-    ├── TOTPProvider
-    └── TwoFactorAuthService
+    CHECK -->|Yes| TOTP
+
+    TOTP -->|Valid| SESSION
+    TOTP -->|Valid| JWT
+    TOTP -->|Invalid| BACKUP
+
+    BACKUP -->|Valid| SESSION
+    BACKUP -->|Valid| JWT
+    BACKUP -->|Invalid| DENIED
+
+    SESSION --> ACCESS
+    JWT --> ACCESS
 ```
-
-The `USERS` table supports 2FA through:
-
-```text
-IS_2FA_ENABLED
-TWO_FACTOR_SECRET
-```
-
----
-
-# 🛡️ Cryptography & Data Integrity
-
-AMS includes cryptographic utilities for authentication, integrity protection, and secure token operations.
-
-### Supported Cryptographic Mechanisms
-
-* SHA-256
-* HMAC-SHA256
-* BCrypt
-* JWT signing
-
-Security utilities are organized under:
-
-```text
-security
-└── crypto
-    ├── HashUtils
-    ├── HmacUtils
-    └── JwtTokenProvider
-```
-
-### SHA-256
-
-SHA-256 is used where cryptographic hashing is required for data integrity and fingerprint generation.
-
-### HMAC-SHA256
-
-HMAC-SHA256 provides cryptographic integrity and authenticity verification for protected data.
 
 ---
 
 # 🎟️ JWT Authentication
 
-AMS supports **JSON Web Token (JWT)** based authentication.
-
-JWT functionality is implemented through the security layer and can be used for authenticated application requests.
+AMS supports **JSON Web Token (JWT)** authentication for protected application requests.
 
 ```mermaid
-flowchart LR
+sequenceDiagram
 
-    A[Client] --> B[Login]
-    B --> C[Authentication Service]
+    participant C as Client
+    participant A as Authentication Service
+    participant J as JwtTokenProvider
+    participant F as Authentication Filter
+    participant Z as Authorization Filter
+    participant R as Protected Resource
 
-    C --> D[Validate Credentials]
+    C->>A: Login
+    A->>A: Validate Credentials
+    A->>J: Generate JWT
+    J-->>A: Signed JWT
+    A-->>C: JWT Token
 
-    D --> E[JwtTokenProvider]
-
-    E --> F[JWT Token]
-
-    F --> A
-
-    A --> G[Protected Request]
-
-    G --> H[Authentication Filter]
-
-    H --> I[Authorization Filter]
-
-    I --> J[Protected Resource]
+    C->>F: Protected Request + JWT
+    F->>F: Validate JWT
+    F->>Z: Authenticated Request
+    Z->>Z: Validate Role & Permission
+    Z->>R: Authorized Request
+    R-->>C: Response
 ```
 
 JWT functionality is provided through:
@@ -180,21 +176,146 @@ security
 
 ---
 
+# 🔐 Two-Factor Authentication
+
+AMS implements **TOTP-based Two-Factor Authentication**.
+
+Compatible authenticator applications include:
+
+- Google Authenticator
+- Authy
+- Other TOTP-compatible applications
+
+## 2FA Endpoints
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| POST | `/api/v1/auth/2fa/setup` | Generate TOTP secret and QR code |
+| POST | `/api/v1/auth/2fa/enable` | Verify OTP and enable 2FA |
+| POST | `/api/v1/auth/2fa/verify` | Verify OTP during authentication |
+
+## 2FA Architecture
+
+```mermaid
+flowchart TB
+
+    TWOFA["🔐 Two-Factor Authentication"]
+
+    SETUP["2FA Setup"]
+    SECRET["TOTP Secret"]
+    QR["QR Code"]
+
+    ENABLE["Enable 2FA"]
+    VERIFY["Verify OTP"]
+
+    BACKUP["Backup Code Manager"]
+    PROVIDER["TOTP Provider"]
+    SERVICE["TwoFactorAuthService"]
+    RESPONSE["TwoFactorResponse"]
+
+    TWOFA --> SETUP
+    SETUP --> SECRET
+    SETUP --> QR
+
+    TWOFA --> ENABLE
+    ENABLE --> SERVICE
+
+    SERVICE --> PROVIDER
+    SERVICE --> BACKUP
+    SERVICE --> RESPONSE
+
+    VERIFY --> SERVICE
+```
+
+## 2FA Components
+
+```text
+security
+└── twofactor
+    ├── BackupCodeManager
+    ├── TOTPProvider
+    ├── TwoFactorAuthService
+    └── TwoFactorResponse
+```
+
+The `USERS` table supports 2FA through:
+
+```text
+IS_2FA_ENABLED
+TWO_FACTOR_SECRET
+```
+
+---
+
+# 🔒 Cryptography & Data Integrity
+
+AMS includes cryptographic utilities for authentication, integrity protection, and secure token operations.
+
+| Mechanism | Purpose |
+|---|---|
+| BCrypt | Password hashing |
+| SHA-256 | Cryptographic hashing / fingerprinting |
+| HMAC-SHA256 | Integrity and authenticity protection |
+| JWT signing | Token authentication |
+
+```mermaid
+flowchart LR
+
+    SECURITY["Security Layer"]
+
+    HASH["HashUtils<br/>SHA-256"]
+    HMAC["HmacUtils<br/>HMAC-SHA256"]
+    JWT["JwtTokenProvider<br/>JWT"]
+
+    PASSWORD["Password Security"]
+    INTEGRITY["Data Integrity"]
+    TOKEN["Token Security"]
+
+    SECURITY --> HASH
+    SECURITY --> HMAC
+    SECURITY --> JWT
+
+    HASH --> PASSWORD
+    HMAC --> INTEGRITY
+    JWT --> TOKEN
+```
+
+---
+
 # 🛡️ Security Filters
 
-AMS provides multiple HTTP security filters.
+```mermaid
+flowchart TB
+
+    REQUEST["HTTP Request"]
+
+    AUTHF["AuthenticationFilter"]
+    AUTHZF["AuthorizationFilter"]
+    CORS["CorsFilter"]
+    RATE["RateLimitingFilter"]
+    HEADERS["SecurityHeadersFilter"]
+
+    CONTROLLER["Controller"]
+
+    REQUEST --> CORS
+    CORS --> RATE
+    RATE --> HEADERS
+    HEADERS --> AUTHF
+    AUTHF --> AUTHZF
+    AUTHZF --> CONTROLLER
+```
 
 ### Authentication Filter
 
-Validates authenticated user sessions/tokens before protected requests are processed.
+Validates authenticated sessions or tokens before protected requests are processed.
 
 ### Authorization Filter
 
-Validates user roles and permissions before allowing access to protected resources.
+Validates roles and permissions before allowing access to protected resources.
 
 ### CORS Filter
 
-Controls cross-origin requests.
+Controls cross-origin HTTP requests.
 
 ### Rate Limiting Filter
 
@@ -202,61 +323,315 @@ Helps protect endpoints from excessive requests and abuse.
 
 ### Security Headers Filter
 
-Adds security-related HTTP response headers to strengthen browser-side protection.
-
-Security filters are organized under:
-
-```text
-security
-└── filter
-    ├── AuthenticationFilter
-    ├── AuthorizationFilter
-    ├── CorsFilter
-    ├── RateLimitingFilter
-    └── SecurityHeadersFilter
-```
+Adds security-related HTTP response headers.
 
 ---
 
-# 🏗️ High-Level System Architecture
+# 👥 Role-Based Access Control (RBAC)
+
+AMS follows a layered RBAC model.
 
 ```mermaid
 flowchart LR
 
-    U[User / Client]
+    USER["👤 User"]
+    UR["User Role"]
+    ROLE["👥 Role"]
+    RP["Role Permission"]
+    PERM["🔑 Permission"]
+    RESOURCE["📦 Resource Access"]
 
-    UI[JSP Web Interface]
+    USER --> UR
+    UR --> ROLE
+    ROLE --> RP
+    RP --> PERM
+    PERM --> RESOURCE
+```
 
-    SEC[Security Layer]
+## RBAC Example
 
-    CTRL[Controller Layer]
+```mermaid
+flowchart TB
 
-    SERVICE[Service Layer]
+    ADMIN["👑 Admin"]
+    MANAGER["👔 Manager"]
+    EMPLOYEE["👤 Employee"]
 
-    REPO[Repository Layer]
+    ADMIN --> USERS["Manage Users"]
+    ADMIN --> ROLES["Manage Roles"]
+    ADMIN --> PERMISSIONS["Manage Permissions"]
 
-    DB[(MySQL Database)]
+    MANAGER --> APPROVE["Approve Requests"]
+    MANAGER --> REPORTS["View Reports"]
 
-    U <--> UI
+    EMPLOYEE --> ACCESS["Assigned Resource Access"]
+```
 
-    UI --> SEC
-    SEC --> CTRL
-    CTRL --> SERVICE
-    SERVICE --> REPO
-    REPO --> DB
+## RBAC Manager
 
-    subgraph SECURITY[Security Layer]
-        AUTH[Authentication]
-        AUTHZ[Authorization]
-        JWT[JWT]
-        TOTP[2FA / TOTP]
-        FILTER[Security Filters]
-        RBAC[RBAC]
-        CRYPTO[Cryptography]
-        SESSION[Session Management]
+The security layer contains a dedicated:
+
+```text
+security
+└── rbac
+    └── RBACManager
+```
+
+---
+
+# 🔑 Permission Management
+
+AMS supports fine-grained permissions.
+
+### Capabilities
+
+- Create permissions
+- Update permissions
+- Delete permissions
+- Assign permissions to roles
+- Validate permissions
+- Control resource-level access
+
+```mermaid
+flowchart LR
+
+    ROLE["Role"]
+    PERMISSION["Permission"]
+    RESOURCE["Resource"]
+    ACTION["Action"]
+    ACCESS["Access Decision"]
+
+    ROLE --> PERMISSION
+    PERMISSION --> RESOURCE
+    RESOURCE --> ACTION
+    ACTION --> ACCESS
+```
+
+A permission can conceptually represent:
+
+```text
+Resource + Action
+```
+
+For example:
+
+```text
+USER + READ
+USER + UPDATE
+ROLE + CREATE
+REPORT + VIEW
+```
+
+---
+
+# 📩 Access Request Management
+
+AMS provides controlled access-request workflows.
+
+### Features
+
+- Submit access requests
+- Track request status
+- Request additional permissions
+- Temporary access management
+- Approval-based access provisioning
+
+```mermaid
+flowchart LR
+
+    EMPLOYEE["👤 Employee"]
+    REQUEST["📩 Access Request"]
+    MANAGER["👔 Manager Review"]
+    ADMIN["👑 Admin Approval"]
+    GRANT["✅ Access Granted"]
+
+    EMPLOYEE --> REQUEST
+    REQUEST --> MANAGER
+    MANAGER --> ADMIN
+    ADMIN --> GRANT
+```
+
+---
+
+# ✅ Approval Workflow
+
+AMS supports approval-based access management.
+
+### Features
+
+- Approve requests
+- Reject requests
+- Approval history
+- Multi-level approval support
+- Controlled access provisioning
+
+```mermaid
+stateDiagram-v2
+
+    [*] --> Submitted
+
+    Submitted --> Pending
+
+    Pending --> Approved
+    Pending --> Rejected
+
+    Approved --> AccessGranted
+    Rejected --> Closed
+
+    AccessGranted --> Closed
+
+    Closed --> [*]
+```
+
+---
+
+# 📋 Audit Management
+
+AMS tracks security-sensitive activities for accountability.
+
+### Audited Activities
+
+- Login activities
+- Permission changes
+- Role changes
+- Access requests
+- Approval actions
+- 2FA setup
+- 2FA enablement
+- 2FA verification
+- Other security-related operations
+
+```mermaid
+flowchart LR
+
+    ACTION["👤 User Action"]
+    EVENT["Application Event"]
+    SERVICE["Audit Service"]
+    LOG["📋 Audit Log"]
+
+    ACTION --> EVENT
+    EVENT --> SERVICE
+    SERVICE --> LOG
+```
+
+## Audit Payload
+
+`CreateAuditLogRequest`
+
+```text
+userId
+action
+description
+ipAddress
+```
+
+Example actions:
+
+```text
+SETUP_2FA
+ENABLE_2FA
+VERIFY_2FA
+UPDATE_PERMISSION
+UPDATE_ROLE
+LOGIN
+```
+
+---
+
+# 📊 Reporting System
+
+AMS provides reporting capabilities for access and security management.
+
+```mermaid
+flowchart TB
+
+    REPORT["📊 Reporting System"]
+
+    USER_REPORT["User Access Reports"]
+    ROLE_REPORT["Role Reports"]
+    PERM_REPORT["Permission Reports"]
+    AUDIT_REPORT["Audit Reports"]
+
+    REPORT --> USER_REPORT
+    REPORT --> ROLE_REPORT
+    REPORT --> PERM_REPORT
+    REPORT --> AUDIT_REPORT
+```
+
+---
+
+# 🔐 Session Management
+
+Session management is isolated inside the security layer.
+
+```text
+security
+└── session
+    └── SessionManager
+```
+
+Conceptually:
+
+```mermaid
+flowchart LR
+
+    LOGIN["Login"]
+    AUTH["Authentication"]
+    SESSION["SessionManager"]
+    ACTIVE["Active Session"]
+    REQUEST["Protected Request"]
+    VALIDATE["Session Validation"]
+    ACCESS["Authorized Access"]
+
+    LOGIN --> AUTH
+    AUTH --> SESSION
+    SESSION --> ACTIVE
+
+    ACTIVE --> REQUEST
+    REQUEST --> VALIDATE
+    VALIDATE --> ACCESS
+```
+
+---
+
+# 🏗️ High-Level Architecture
+
+```mermaid
+flowchart TB
+
+    CLIENT["👤 User / Client"]
+
+    UI["🖥️ JSP Web Interface"]
+
+    SECURITY["🔐 Security Layer"]
+
+    CONTROLLER["🎯 Controller Layer"]
+
+    SERVICE["⚙️ Service Layer"]
+
+    REPOSITORY["🗄️ Repository Layer"]
+
+    DATABASE[("🐬 MySQL Database")]
+
+    CLIENT <--> UI
+    UI --> SECURITY
+    SECURITY --> CONTROLLER
+    CONTROLLER --> SERVICE
+    SERVICE --> REPOSITORY
+    REPOSITORY --> DATABASE
+
+    subgraph SECURITY_MODULE["Security Layer"]
+        AUTH["Authentication"]
+        AUTHZ["Authorization"]
+        JWT["JWT"]
+        TOTP["2FA / TOTP"]
+        RBAC["RBAC"]
+        SESSION["Session Management"]
+        FILTER["Security Filters"]
+        CRYPTO["Cryptography"]
     end
 
-    SEC --> SECURITY
+    SECURITY --> SECURITY_MODULE
 ```
 
 ---
@@ -301,292 +676,71 @@ sequenceDiagram
 
 ---
 
-# 👥 User Management
+# 👤 User Management
 
 AMS provides centralized user management.
 
-### Features
+### Capabilities
 
-* Create users
-* Update users
-* Delete users
-* Activate / deactivate users
-* Assign roles
-* Manage user access
-* Enable / disable 2FA
-* Manage authentication credentials
-
----
-
-# 🛡️ Role Management
-
-AMS implements Role-Based Access Control.
-
-### Features
-
-* Create roles
-* Update roles
-* Delete roles
-* Assign permissions to roles
-* Manage role-based access
-
-Example:
-
-```text
-Admin
- |
- ├── Manage Users
- ├── Manage Roles
- └── Manage Permissions
-
-
-Manager
- |
- ├── Approve Requests
- └── View Reports
-
-
-Employee
- |
- └── Assigned Resource Access
-```
-
----
-
-# 🔐 Permission Management
-
-AMS provides fine-grained authorization through permissions.
-
-### Features
-
-* Create permissions
-* Update permissions
-* Delete permissions
-* Assign permissions to roles
-* Validate permissions
-* Control resource-level access
-
-Relationship:
-
-```text
-Role
-  |
-  ↓
-Permission
-  |
-  ↓
-Resource Access
-```
-
----
-
-# 👥 RBAC Design
-
-AMS follows **Role-Based Access Control (RBAC)**.
+- Create users
+- Update users
+- Delete users
+- Activate / deactivate users
+- Assign roles
+- Manage user access
+- Enable / disable 2FA
+- Manage authentication credentials
 
 ```mermaid
 flowchart LR
 
-    U[User]
+    ADMIN["👑 Administrator"]
 
-    UR[User Role]
+    CREATE["Create"]
+    UPDATE["Update"]
+    DELETE["Delete"]
+    STATUS["Activate / Deactivate"]
+    ROLE["Assign Roles"]
+    ACCESS["Manage Access"]
+    TWOFA["Manage 2FA"]
 
-    R[Role]
-
-    RP[Role Permission]
-
-    P[Permission]
-
-    RA[Resource Access]
-
-    U --> UR
-    UR --> R
-    R --> RP
-    RP --> P
-    P --> RA
+    ADMIN --> CREATE
+    ADMIN --> UPDATE
+    ADMIN --> DELETE
+    ADMIN --> STATUS
+    ADMIN --> ROLE
+    ADMIN --> ACCESS
+    ADMIN --> TWOFA
 ```
-
-### RBAC Relationship
-
-```text
-User
-  |
-  ↓
-User Role
-  |
-  ↓
-Role
-  |
-  ↓
-Role Permission
-  |
-  ↓
-Permission
-  |
-  ↓
-Resource Access
-```
-
----
-
-# 📩 Access Request Management
-
-AMS provides controlled access request workflows.
-
-### Features
-
-* Submit access requests
-* Track request status
-* Request additional permissions
-* Temporary access management
-* Approval-based access provisioning
-
-## Access Request Workflow
-
-```mermaid
-flowchart LR
-
-    E[Employee]
-
-    R[Access Request]
-
-    M[Manager Review]
-
-    A[Admin Approval]
-
-    G[Access Granted]
-
-    E --> R
-    R --> M
-    M --> A
-    A --> G
-```
-
----
-
-# ✅ Approval Workflow
-
-AMS supports approval-based access management.
-
-### Features
-
-* Approve requests
-* Reject requests
-* Approval history
-* Multi-level approval support
-* Controlled access provisioning
-
-## Approval Flow
-
-```mermaid
-stateDiagram-v2
-
-    [*] --> Submitted
-
-    Submitted --> Pending
-
-    Pending --> Approved
-    Pending --> Rejected
-
-    Approved --> AccessGranted
-
-    Rejected --> Closed
-
-    AccessGranted --> Closed
-
-    Closed --> [*]
-```
-
----
-
-# 📋 Audit Management
-
-AMS tracks important security activities for accountability and auditing.
-
-### Tracks
-
-* Login activities
-* Permission changes
-* Role changes
-* Access requests
-* Approval actions
-* Security-related operations
-
-Example:
-
-```text
-User:
-John Smith
-
-Action:
-Permission Updated
-
-Time:
-2026-08-05
-
-Status:
-Successful
-```
-
-## Audit Logging Architecture
-
-```mermaid
-flowchart LR
-
-    A[User Action]
-
-    B[Application Event]
-
-    C[Audit Service]
-
-    D[(Audit Log)]
-
-    A --> B
-    B --> C
-    C --> D
-```
-
----
-
-# 📊 Reporting System
-
-AMS provides reporting capabilities for security and access management.
-
-### Reports
-
-* User access reports
-* Role reports
-* Permission reports
-* Audit reports
 
 ---
 
 # 🧩 Module Architecture
 
-AMS is organized into independent business modules.
+AMS is organized around independent business modules.
 
 ```mermaid
-flowchart LR
+flowchart TB
 
-    AMS[Authorization Management System]
+    AMS["🔐 AMS"]
 
-    AUTH[Authentication Module]
-    USER[User Module]
-    ROLE[Role Module]
-    PERM[Permission Module]
-    ACCESS[Access Request Module]
-    APPROVAL[Approval Module]
-    AUDIT[Audit Module]
-    REPORT[Report Module]
+    ACCESS["Access Request"]
+    APPROVAL["Approval"]
+    AUDIT["Audit"]
+    AUTH["Authentication"]
+    PERMISSION["Permission"]
+    REPORT["Report"]
+    ROLE["Role"]
+    USER["User"]
 
-    AMS --> AUTH
-    AMS --> USER
-    AMS --> ROLE
-    AMS --> PERM
     AMS --> ACCESS
     AMS --> APPROVAL
     AMS --> AUDIT
+    AMS --> AUTH
+    AMS --> PERMISSION
     AMS --> REPORT
+    AMS --> ROLE
+    AMS --> USER
 ```
 
 ---
@@ -597,7 +751,6 @@ Each business module follows a consistent structure:
 
 ```text
 Module
-
 ├── Controller
 ├── DTO
 ├── Entity
@@ -607,109 +760,139 @@ Module
 └── Validator
 ```
 
-This structure improves:
+This structure supports:
 
-* Separation of Concerns
-* Maintainability
-* Testability
-* Module-level organization
-* Code reusability
-
----
-
-# 🔐 Security Architecture
-
-```text
-security
-│
-├── authentication
-│
-├── authorization
-│
-├── crypto
-│   ├── HashUtils
-│   ├── HmacUtils
-│   └── JwtTokenProvider
-│
-├── filter
-│   ├── AuthenticationFilter
-│   ├── AuthorizationFilter
-│   ├── CorsFilter
-│   ├── RateLimitingFilter
-│   └── SecurityHeadersFilter
-│
-├── password
-│
-├── rbac
-│
-├── session
-│
-└── twofactor
-    ├── TOTPProvider
-    └── TwoFactorAuthService
-```
+- Separation of Concerns
+- Maintainability
+- Testability
+- Module-level organization
+- Code reusability
 
 ---
 
-# 🛡️ Authorization Flow
-
-After authentication, every protected request is validated through role and permission checks.
+# 🛡️ Security Architecture
 
 ```mermaid
-flowchart TD
+flowchart TB
 
-    A[Authenticated Request]
+    SECURITY["🔐 Security"]
 
-    B[Authentication Check]
+    AUTHN["Authentication"]
+    AUTHZ["Authorization"]
+    CRYPTO["Cryptography"]
+    FILTER["Security Filters"]
+    PASSWORD["Password Management"]
+    RBAC["RBAC"]
+    SESSION["Session Management"]
+    TWOFA["Two-Factor Authentication"]
 
-    C[Role Validation]
+    SECURITY --> AUTHN
+    SECURITY --> AUTHZ
+    SECURITY --> CRYPTO
+    SECURITY --> FILTER
+    SECURITY --> PASSWORD
+    SECURITY --> RBAC
+    SECURITY --> SESSION
+    SECURITY --> TWOFA
 
-    D[Permission Validation]
+    CRYPTO --> HASH["HashUtils"]
+    CRYPTO --> HMAC["HmacUtils"]
+    CRYPTO --> JWT["JwtTokenProvider"]
 
-    E{Access Allowed?}
+    FILTER --> AF["AuthenticationFilter"]
+    FILTER --> AZ["AuthorizationFilter"]
+    FILTER --> CORS["CorsFilter"]
+    FILTER --> RATE["RateLimitingFilter"]
+    FILTER --> HEADERS["SecurityHeadersFilter"]
 
-    F[Allow Access]
+    RBAC --> RBACM["RBACManager"]
 
-    G[Deny Access]
+    SESSION --> SM["SessionManager"]
 
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-
-    E -->|Yes| F
-    E -->|No| G
+    TWOFA --> BCM["BackupCodeManager"]
+    TWOFA --> TOTP["TOTPProvider"]
+    TWOFA --> TFAS["TwoFactorAuthService"]
+    TWOFA --> TFR["TwoFactorResponse"]
 ```
 
 ---
 
-# 🗄️ Database Design
+# 🗂️ Project Structure
 
-Main database modules include:
+```text
+com.ams
+│
+├── common
+│   ├── constant
+│   ├── enums
+│   ├── exception
+│   ├── util
+│   └── validator
+│       ├── CommonValidator
+│       ├── EmailValidator
+│       ├── PasswordValidator
+│       └── PhoneValidator
+│
+├── config
+│
+├── migration
+│
+├── modules
+│   ├── accessrequest
+│   ├── approval
+│   ├── audit
+│   ├── auth
+│   ├── permission
+│   ├── report
+│   ├── role
+│   └── user
+│
+└── security
+    ├── authentication
+    ├── authorization
+    ├── crypto
+    │   ├── HashUtils
+    │   ├── HmacUtils
+    │   └── JwtTokenProvider
+    ├── filter
+    │   ├── AuthenticationFilter
+    │   ├── AuthorizationFilter
+    │   ├── CorsFilter
+    │   ├── RateLimitingFilter
+    │   └── SecurityHeadersFilter
+    ├── password
+    ├── rbac
+    │   └── RBACManager
+    ├── session
+    │   └── SessionManager
+    └── twofactor
+        ├── BackupCodeManager
+        ├── TOTPProvider
+        ├── TwoFactorAuthService
+        └── TwoFactorResponse
+```
+
+---
+
+# 🗄️ Database Architecture
+
+The primary database is **MySQL**.
+
+## Main Tables
 
 ```text
 users
-
 roles
-
 permissions
-
 user_roles
-
 role_permissions
-
 access_request
-
 approval
-
 audit_log
-
 password_reset_token
 ```
 
----
-
-# 🗃️ Database Relationship Overview
+## Entity Relationship Diagram
 
 ```mermaid
 erDiagram
@@ -779,8 +962,6 @@ erDiagram
 
 AMS uses version-based database migrations.
 
-Migration scripts are maintained under the migration package/directory.
-
 ```text
 db.migration
 
@@ -796,179 +977,173 @@ db.migration
 └── V10__...
 ```
 
-The versioned migration structure provides a controlled approach for evolving the database schema.
+The versioned migration structure provides controlled database-schema evolution.
 
 ---
 
-# 📂 Project Structure
+# 🏥 Real-World Applications
 
-```text
-com.ams
-
-├── common
-│   ├── constant
-│   ├── enums
-│   ├── exception
-│   ├── util
-│   └── validator
-│
-├── config
-│
-├── migration
-│
-├── modules
-│   ├── auth
-│   ├── user
-│   ├── role
-│   ├── permission
-│   ├── accessrequest
-│   ├── approval
-│   ├── audit
-│   └── report
-│
-└── security
-    ├── authentication
-    ├── authorization
-    ├── crypto
-    ├── filter
-    ├── password
-    ├── rbac
-    ├── session
-    └── twofactor
-```
-
----
-
-# 🌍 Real-World Applications
-
-## 🏥 Healthcare Authorization System
-
-Example:
-
-```text
-Hospital System
-
-
-Doctor
- |
- ├── View Patient Records
- └── Update Prescription
-
-
-Nurse
- |
- └── View Patient Information
-
-
-Receptionist
- |
- └── Manage Appointment
-
-
-Admin
- |
- └── Manage System Access
-```
-
-AMS can act as an authorization layer for healthcare applications where different staff members require different levels of access.
-
----
-
-## 🏢 Enterprise Employee Access Management
-
-Organizations can manage:
-
-* Employee accounts
-* Department access
-* Internal applications
-* Security policies
-* Application permissions
-
----
-
-## 💻 Application Authorization Service
-
-AMS can work as an authorization layer for existing applications.
+## Healthcare Authorization
 
 ```mermaid
 flowchart LR
 
-    A[Client Application]
+    HOSPITAL["🏥 Hospital System"]
 
-    B[Application Layer]
+    DOCTOR["👨‍⚕️ Doctor"]
+    NURSE["👩‍⚕️ Nurse"]
+    RECEPTION["🧑‍💼 Receptionist"]
+    ADMIN["👑 Admin"]
 
-    C[AMS Authorization Layer]
+    PATIENT["Patient Records"]
+    PRESCRIPTION["Prescription"]
+    APPOINTMENT["Appointments"]
+    ACCESS["System Access"]
 
-    D[Protected Resource]
+    HOSPITAL --> DOCTOR
+    HOSPITAL --> NURSE
+    HOSPITAL --> RECEPTION
+    HOSPITAL --> ADMIN
 
-    A --> B
-    B --> C
-    C --> D
+    DOCTOR --> PATIENT
+    DOCTOR --> PRESCRIPTION
+
+    NURSE --> PATIENT
+
+    RECEPTION --> APPOINTMENT
+
+    ADMIN --> ACCESS
+```
+
+AMS can act as an authorization layer where different healthcare staff members require different access levels.
+
+---
+
+# 🏢 Enterprise Employee Access Management
+
+Organizations can manage:
+
+- Employee accounts
+- Department access
+- Internal applications
+- Security policies
+- Application permissions
+
+```mermaid
+flowchart LR
+
+    ORG["🏢 Organization"]
+
+    EMP["Employees"]
+    DEPT["Departments"]
+    APPS["Internal Applications"]
+    POLICIES["Security Policies"]
+    PERMISSIONS["Permissions"]
+
+    ORG --> EMP
+    ORG --> DEPT
+    ORG --> APPS
+    ORG --> POLICIES
+
+    POLICIES --> PERMISSIONS
+    PERMISSIONS --> APPS
 ```
 
 ---
 
-## ☁️ SaaS Authorization Platform
+# 💻 Application Authorization Service
+
+AMS can operate as an authorization layer for existing applications.
+
+```mermaid
+flowchart LR
+
+    CLIENT["Client Application"]
+    APP["Application Layer"]
+    AMS["🔐 AMS Authorization Layer"]
+    RESOURCE["Protected Resource"]
+
+    CLIENT --> APP
+    APP --> AMS
+    AMS --> RESOURCE
+```
+
+---
+
+# ☁️ SaaS Authorization Platform
 
 AMS can be extended into a multi-tenant authorization platform.
 
-```text
-AMS Platform
-     |
-     ├── Company A
-     │    ├── Users
-     │    ├── Roles
-     │    └── Permissions
-     │
-     └── Company B
-          ├── Users
-          ├── Roles
-          └── Permissions
-```
+```mermaid
+flowchart TB
 
-Each organization can maintain its own security policies and access rules.
+    AMS["☁️ AMS Platform"]
+
+    COMPANY_A["Company A"]
+    COMPANY_B["Company B"]
+
+    A_USERS["Users"]
+    A_ROLES["Roles"]
+    A_PERMISSIONS["Permissions"]
+
+    B_USERS["Users"]
+    B_ROLES["Roles"]
+    B_PERMISSIONS["Permissions"]
+
+    AMS --> COMPANY_A
+    AMS --> COMPANY_B
+
+    COMPANY_A --> A_USERS
+    COMPANY_A --> A_ROLES
+    COMPANY_A --> A_PERMISSIONS
+
+    COMPANY_B --> B_USERS
+    COMPANY_B --> B_ROLES
+    COMPANY_B --> B_PERMISSIONS
+```
 
 ---
 
-# 🛠️ Technologies Used
+# 🛠️ Technologies
 
 ## Backend
 
-* Java
-* Servlet API
-* JSP
-* JDBC
+- Java
+- Servlet API
+- JSP
+- JDBC
 
 ## Database
 
-* MySQL
+- MySQL
 
 ## Frontend
 
-* HTML
-* CSS
-* JavaScript
-* Bootstrap
+- HTML
+- CSS
+- JavaScript
+- Bootstrap
 
 ## Security
 
-* BCrypt Password Hashing
-* Session Authentication
-* JWT Authentication
-* RBAC Authorization
-* TOTP / 2FA
-* SHA-256
-* HMAC-SHA256
-* CORS Protection
-* Rate Limiting
-* Security Headers
+- BCrypt
+- Session Authentication
+- JWT
+- RBAC
+- TOTP / 2FA
+- Backup Codes
+- SHA-256
+- HMAC-SHA256
+- CORS Protection
+- Rate Limiting
+- Security Headers
 
 ## Tools
 
-* Eclipse IDE
-* Apache Tomcat
-* Git
-* Maven
+- Eclipse IDE
+- Apache Tomcat
+- Git
+- Maven
 
 ---
 
@@ -978,21 +1153,18 @@ Each organization can maintain its own security policies and access rules.
 
 ```bash
 git clone https://github.com/MotionPrograming/AuthorizationManagementSystem.git
-
 cd AuthorizationManagementSystem
 ```
 
----
-
-## 2. Database Setup
-
-Create the MySQL database:
+## 2. Create MySQL Database
 
 ```sql
 CREATE DATABASE authorization_management;
 ```
 
-Configure the database connection:
+## 3. Configure Database
+
+Configure:
 
 ```text
 resources/db.properties
@@ -1006,11 +1178,9 @@ db.username=root
 db.password=password
 ```
 
-> For production deployments, database credentials should be supplied through secure environment-specific configuration rather than committed to source control.
+> ⚠️ For production deployments, database credentials should be supplied through secure environment-specific configuration rather than committed to source control.
 
----
-
-## 3. Run Database Migration
+## 4. Run Database Migration
 
 Execute:
 
@@ -1020,30 +1190,26 @@ MigrationRunner.java
 
 The versioned migration scripts will create and update the required database schema.
 
----
-
-## 4. Configure Application
+## 5. Configure Application
 
 Verify:
 
-* MySQL connection
-* Application configuration
-* JWT configuration
-* Security configuration
-* Session configuration
-* 2FA configuration
+- MySQL connection
+- Application configuration
+- JWT configuration
+- Security configuration
+- Session configuration
+- 2FA configuration
 
----
+## 6. Deploy
 
-## 5. Deploy Application
-
-Deploy the application using:
+Deploy the application to:
 
 ```text
 Apache Tomcat Server
 ```
 
-Then access:
+Default application URL:
 
 ```text
 http://localhost:8080/AuthorizationManagementSystem
@@ -1051,72 +1217,94 @@ http://localhost:8080/AuthorizationManagementSystem
 
 ---
 
-# 📌 Design Principles
+# 🧠 Design Principles
 
-This project follows:
+The project follows:
 
-* SOLID Principles
-* Clean Code Practices
-* Separation of Concerns
-* Single Responsibility Principle
-* Repository Pattern
-* DTO Pattern
-* Mapper Pattern
-* Layered Architecture
-* Feature-Based Architecture
-* RBAC Pattern
-
----
-
-# 🚀 Future Scalability Roadmap
-
-The current AMS implementation provides a foundation for evolving into a more comprehensive IAM platform.
-
-Future improvements include:
-
-* REST API Support
-* OAuth 2.0 Integration
-* OpenID Connect (OIDC)
-* Spring Boot Migration
-* Microservices Architecture
-* Redis Session Management
-* Email Notification Service
-* Multi-Tenant SaaS Architecture
-* Cloud Deployment
-* API Gateway Authorization
-* Centralized Identity Provider
-* Distributed Audit Processing
-* Policy-Based Access Control (PBAC)
-
-## Future Architecture
+- SOLID Principles
+- Clean Code Practices
+- Separation of Concerns
+- Single Responsibility Principle
+- Repository Pattern
+- DTO Pattern
+- Mapper Pattern
+- Layered Architecture
+- Feature-Based Architecture
+- RBAC Pattern
 
 ```mermaid
 flowchart LR
 
-    CLIENT[Client Applications]
+    PRINCIPLES["Design Principles"]
 
-    GATEWAY[API Gateway]
+    SOLID["SOLID"]
+    CLEAN["Clean Code"]
+    SOC["Separation of Concerns"]
+    REPOSITORY["Repository Pattern"]
+    DTO["DTO Pattern"]
+    MAPPER["Mapper Pattern"]
+    LAYERED["Layered Architecture"]
+    FEATURE["Feature-Based Architecture"]
+    RBAC["RBAC"]
 
-    IAM[Identity / Authorization Service]
+    PRINCIPLES --> SOLID
+    PRINCIPLES --> CLEAN
+    PRINCIPLES --> SOC
+    PRINCIPLES --> REPOSITORY
+    PRINCIPLES --> DTO
+    PRINCIPLES --> MAPPER
+    PRINCIPLES --> LAYERED
+    PRINCIPLES --> FEATURE
+    PRINCIPLES --> RBAC
+```
 
-    USER[User Service]
+---
 
-    PERM[Permission Service]
+# 🚀 Scalability Roadmap
 
-    AUDIT[Audit Service]
+Future improvements include:
 
-    DB[(Database)]
+- REST API support
+- OAuth 2.0 integration
+- OpenID Connect (OIDC)
+- Spring Boot migration
+- Microservices architecture
+- Redis session management
+- Email notification service
+- Multi-tenant SaaS architecture
+- Cloud deployment
+- API Gateway authorization
+- Centralized Identity Provider
+- Distributed audit processing
+- Policy-Based Access Control (PBAC)
+
+---
+
+# 🔭 Future Architecture
+
+```mermaid
+flowchart LR
+
+    CLIENT["Client Applications"]
+    GATEWAY["API Gateway"]
+
+    IAM["Identity / Authorization Service"]
+    USER["User Service"]
+    PERMISSION["Permission Service"]
+    AUDIT["Audit Service"]
+
+    DB[("Database")]
 
     CLIENT --> GATEWAY
 
     GATEWAY --> IAM
     GATEWAY --> USER
-    GATEWAY --> PERM
+    GATEWAY --> PERMISSION
     GATEWAY --> AUDIT
 
     IAM --> DB
     USER --> DB
-    PERM --> DB
+    PERMISSION --> DB
     AUDIT --> DB
 ```
 
@@ -1124,20 +1312,120 @@ flowchart LR
 
 # 🎯 System Design Goals
 
-The architecture focuses on:
+```mermaid
+mindmap
+  root((AMS))
+    Secure Identity Management
+    Strong Authentication
+    Multi-Factor Authentication
+    Fine-Grained Authorization
+    Role-Based Access Control
+    Security Auditing
+    Controlled Access Workflows
+    Modular Development
+    Maintainability
+    Enterprise Scalability
+    Reusable Authorization
+    Future Microservice Migration
+```
 
-* 🔐 Secure identity management
-* 🛡️ Fine-grained authorization
-* 🔑 Strong authentication
-* 📱 Multi-factor authentication
-* 👥 Role-based access control
-* 📋 Security auditing
-* 🔄 Controlled access workflows
-* 🧩 Modular development
-* 🛠️ Easy maintenance
-* 📈 Enterprise scalability
-* ♻️ Reusable authorization capabilities
-* 🚀 Future microservice migration
+---
+
+# 📈 Security & Authorization Flow
+
+```mermaid
+flowchart TD
+
+    REQUEST["Incoming Request"]
+
+    AUTHENTICATION["🔐 Authentication"]
+    ROLE["👥 Role Validation"]
+    PERMISSION["🔑 Permission Validation"]
+
+    DECISION{"Access Allowed?"}
+
+    ALLOW["✅ Allow Access"]
+    DENY["❌ Deny Access"]
+
+    REQUEST --> AUTHENTICATION
+    AUTHENTICATION --> ROLE
+    ROLE --> PERMISSION
+    PERMISSION --> DECISION
+
+    DECISION -->|Yes| ALLOW
+    DECISION -->|No| DENY
+```
+
+---
+
+# 🔐 Security Responsibility Map
+
+| Component | Responsibility |
+|---|---|
+| `AuthenticationFilter` | Authenticate protected requests |
+| `AuthorizationFilter` | Validate authorization |
+| `RBACManager` | Manage RBAC decisions |
+| `SessionManager` | Manage application sessions |
+| `JwtTokenProvider` | JWT creation/validation |
+| `TOTPProvider` | TOTP operations |
+| `BackupCodeManager` | Backup-code management |
+| `TwoFactorAuthService` | 2FA orchestration |
+| `HashUtils` | Cryptographic hashing |
+| `HmacUtils` | HMAC integrity protection |
+
+---
+
+# 📌 Architecture Summary
+
+```mermaid
+flowchart TB
+
+    CLIENT["👤 Client"]
+
+    AUTHENTICATION["🔐 Authentication"]
+    TWOFA["📱 2FA"]
+    SESSION["🔒 Session"]
+    JWT["🎟️ JWT"]
+
+    AUTHORIZATION["🛡️ Authorization"]
+    RBAC["👥 RBAC"]
+    PERMISSION["🔑 Permissions"]
+
+    GOVERNANCE["📋 Access Governance"]
+    REQUEST["📩 Access Request"]
+    APPROVAL["✅ Approval"]
+
+    AUDITING["📊 Auditing & Reporting"]
+    AUDIT["Audit"]
+    REPORT["Reports"]
+
+    DATABASE[("🐬 MySQL")]
+
+    CLIENT --> AUTHENTICATION
+
+    AUTHENTICATION --> TWOFA
+    AUTHENTICATION --> SESSION
+    AUTHENTICATION --> JWT
+
+    SESSION --> AUTHORIZATION
+    JWT --> AUTHORIZATION
+
+    AUTHORIZATION --> RBAC
+    RBAC --> PERMISSION
+
+    PERMISSION --> GOVERNANCE
+    GOVERNANCE --> REQUEST
+    REQUEST --> APPROVAL
+
+    APPROVAL --> AUDITING
+    AUDITING --> AUDIT
+    AUDITING --> REPORT
+
+    AUTHENTICATION --> DATABASE
+    AUTHORIZATION --> DATABASE
+    GOVERNANCE --> DATABASE
+    AUDITING --> DATABASE
+```
 
 ---
 
@@ -1147,19 +1435,17 @@ The architecture focuses on:
 
 Backend Software Engineer
 
-Interested in:
+### Interests
 
-* Java
-* C#
-* ASP.NET Core
-* Microservices
-* Software Architecture
-* Database Design
+- Java
+- C#
+- ASP.NET Core
+- Microservices
+- Software Architecture
+- Database Design
 
 ---
 
 # 📄 License
 
 This project is developed for **educational purposes and software engineering practice**.
-
-```

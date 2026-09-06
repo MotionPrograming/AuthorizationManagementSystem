@@ -17,4 +17,6 @@ public interface RoleRepository {
 	boolean update(Role role);
 
 	boolean deleteById(Long roleId);
+
+	void assignPermissionToRole(Long roleId, Long permissionId);
 }

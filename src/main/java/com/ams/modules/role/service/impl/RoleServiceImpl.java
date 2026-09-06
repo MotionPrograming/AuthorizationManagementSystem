@@ -69,4 +69,14 @@ public class RoleServiceImpl implements RoleService {
 	public boolean deleteRole(Long roleId) {
 		return roleRepository.deleteById(roleId);
 	}
+
+	@Override
+	public void assignPermissionToRole(Long roleId, Long permissionId) {
+		// Validation check for Role existence
+		if (roleRepository.findById(roleId).isEmpty()) {
+			throw new ValidationException("Role not found with id: " + roleId);
+		}
+
+		roleRepository.assignPermissionToRole(roleId, permissionId);
+	}
 }

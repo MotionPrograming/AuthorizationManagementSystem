@@ -142,4 +142,17 @@ public class UserRepositoryImpl implements UserRepository {
 
 		return user;
 	}
+
+	@Override
+	public void assignRoleToUser(Long userId, Long roleId) {
+		String sql = "INSERT INTO USER_ROLES (USER_ID, ROLE_ID) VALUES (?, ?)";
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setLong(1, userId);
+			pstmt.setLong(2, roleId);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException("Error assigning role to user: " + e.getMessage(), e);
+		}
+	}
 }

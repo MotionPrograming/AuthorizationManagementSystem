@@ -1,7 +1,9 @@
 package com.ams.modules.user.controller;
 
 import java.io.IOException;
+import java.util.List;
 
+import com.ams.common.util.JsonUtil;
 import com.ams.modules.user.dto.CreateUserRequest;
 import com.ams.modules.user.dto.UserResponse;
 import com.ams.modules.user.repository.impl.UserRepositoryImpl;
@@ -15,7 +17,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/api/v1/users")
+@WebServlet("/api/v1/users/*")
 public class UserController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -27,11 +29,42 @@ public class UserController extends HttpServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("application/json");
 		resp.setCharacterEncoding("UTF-8");
 
 		try {
+			List<UserResponse> users = userService.getAllUsers();
+			resp.setStatus(HttpServletResponse.SC_OK);
+			resp.getWriter().write(JsonUtil.toJson(users));
+		} catch (Exception e) {
+			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			resp.getWriter().write("{\"status\": \"ERROR\", \"message\": \"" + e.getMessage() + "\"}");
+		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setContentType("application/json");
+		resp.setCharacterEncoding("UTF-8");
+
+		String pathInfo = req.getPathInfo();
+
+		try {
+			// POST /api/v1/users/assign-role
+			if (pathInfo != null && pathInfo.equals("/assign-role")) {
+				Long userId = Long.parseLong(req.getParameter("userId"));
+				Long roleId = Long.parseLong(req.getParameter("roleId"));
+
+				userService.assignRoleToUser(userId, roleId);
+
+				resp.setStatus(HttpServletResponse.SC_OK);
+				resp.getWriter()
+						.write("{\"status\": \"SUCCESS\", \"message\": \"Role assigned to user successfully.\"}");
+				return;
+			}
+
+			// Base POST /api/v1/users (Create User)
 			CreateUserRequest createUserRequest = new CreateUserRequest();
 			createUserRequest.setUsername(req.getParameter("username"));
 			createUserRequest.setEmail(req.getParameter("email"));

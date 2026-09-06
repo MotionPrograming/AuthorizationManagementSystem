@@ -1,7 +1,9 @@
 package com.ams.modules.permission.controller;
 
 import java.io.IOException;
+import java.util.List;
 
+import com.ams.common.util.JsonUtil;
 import com.ams.modules.permission.dto.CreatePermissionRequest;
 import com.ams.modules.permission.dto.PermissionResponse;
 import com.ams.modules.permission.repository.impl.PermissionRepositoryImpl;
@@ -24,6 +26,21 @@ public class PermissionController extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		this.permissionService = new PermissionServiceImpl(new PermissionRepositoryImpl(), new PermissionValidator());
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setContentType("application/json");
+		resp.setCharacterEncoding("UTF-8");
+
+		try {
+			List<PermissionResponse> permissions = permissionService.getAllPermissions();
+			resp.setStatus(HttpServletResponse.SC_OK);
+			resp.getWriter().write(JsonUtil.toJson(permissions));
+		} catch (Exception e) {
+			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			resp.getWriter().write("{\"status\": \"ERROR\", \"message\": \"" + e.getMessage() + "\"}");
+		}
 	}
 
 	@Override

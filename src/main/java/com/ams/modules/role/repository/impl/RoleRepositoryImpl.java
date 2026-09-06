@@ -124,4 +124,17 @@ public class RoleRepositoryImpl implements RoleRepository {
 		}
 		return role;
 	}
+
+	@Override
+	public void assignPermissionToRole(Long roleId, Long permissionId) {
+		String sql = "INSERT INTO ROLE_PERMISSIONS (ROLE_ID, PERMISSION_ID) VALUES (?, ?)";
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setLong(1, roleId);
+			pstmt.setLong(2, permissionId);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException("Error assigning permission to role: " + e.getMessage(), e);
+		}
+	}
 }

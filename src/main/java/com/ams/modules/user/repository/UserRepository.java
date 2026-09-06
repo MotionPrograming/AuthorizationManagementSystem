@@ -17,4 +17,6 @@ public interface UserRepository {
 	boolean update(User user);
 
 	boolean deleteById(Long id);
+
+	void assignRoleToUser(Long userId, Long roleId);
 }

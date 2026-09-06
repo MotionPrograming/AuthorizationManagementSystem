@@ -26,48 +26,44 @@ public class AuthenticationService {
 	// প্রাথমিক লগইন ও ২FA স্ট্যাটাস চেকিং
 	public LoginResult authenticate(String username, String rawPassword) {
 		Optional<User> userOptional = userRepository.findByUsername(username);
-
 		if (userOptional.isEmpty()) {
 			return LoginResult.failure("Invalid username or password");
 		}
 
 		User user = userOptional.get();
-
 		if (!"ACTIVE".equalsIgnoreCase(user.getStatus())) {
 			return LoginResult.failure("User account is inactive or disabled");
 		}
 
-		// BCrypt Password Check
-		if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+		// Password Hash Check
+		if (!passwordEncoder.matches(rawPassword, user.getPasswordHash())) {
 			return LoginResult.failure("Invalid username or password");
 		}
 
-		// ২FA সক্রিয় থাকলে OTP ভ্যালিডেশন স্টেপে পাঠানো
+		// ২FA সক্রিয় থাকলে OTP ভ্যালিডেশন স্টেপে পাঠানো
 		if (user.getIs2faEnabled() != null && user.getIs2faEnabled() == 1) {
-			return LoginResult.requires2FA(user.getId(), user.getUsername());
+			return LoginResult.requires2FA(user.getUserId(), user.getUsername());
 		}
 
-		// ২FA চালু না থাকলে সেশন ক্রিয়েট
-		String sessionId = sessionManager.createSession(user.getId(), user.getUsername());
+		// ২FA চালু না থাকলে সেশন ক্রিয়েট
+		String sessionId = sessionManager.createSession(user.getUserId(), user.getUsername());
 		return LoginResult.success(sessionId, user);
 	}
 
-	// ২FA OTP ভ্যালিডেশন করে চূড়ান্ত লগইন
+	// ২FA OTP ভ্যালিডেশন করে চূড়ান্ত লগইন
 	public LoginResult verify2FAAndLogin(Long userId, int code) {
 		Optional<User> userOptional = userRepository.findById(userId);
-
 		if (userOptional.isEmpty()) {
 			return LoginResult.failure("User not found");
 		}
 
 		User user = userOptional.get();
 		boolean isValidOtp = twoFactorAuthService.authenticate2FA(user.getTwoFactorSecret(), code);
-
 		if (!isValidOtp) {
 			return LoginResult.failure("Invalid 2FA verification code");
 		}
 
-		String sessionId = sessionManager.createSession(user.getId(), user.getUsername());
+		String sessionId = sessionManager.createSession(user.getUserId(), user.getUsername());
 		return LoginResult.success(sessionId, user);
 	}
 
@@ -99,7 +95,8 @@ public class AuthenticationService {
 		}
 
 		public static LoginResult success(String sessionId, User user) {
-			return new LoginResult(true, false, "Login successful", sessionId, user.getId(), user.getUsername(), user);
+			return new LoginResult(true, false, "Login successful", sessionId, user.getUserId(), user.getUsername(),
+					user);
 		}
 
 		public static LoginResult requires2FA(Long userId, String username) {
