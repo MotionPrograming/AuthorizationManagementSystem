@@ -2,12 +2,23 @@ package com.ams.security.crypto;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import com.ams.config.ApplicationConfig;
 
 public class JwtTokenProvider {
 
 	// HMAC-SHA256 এর জন্য অন্তত ২৫৬-বিট (৩২ বাইট) সিক্রেট কী ব্যবহার করা উচিত
-	private static final String SECRET_KEY = "AMS_ULTRA_SECURE_SECRET_KEY_FOR_JWT_HMAC256_SIGNING";
+	private static final String SECRET_KEY = loadSecret();
 	private static final long EXPIRATION_TIME_MS = 3600000; // ১ ঘণ্টা
+
+	private static String loadSecret() {
+		String env = System.getenv("AMS_JWT_SECRET");
+		if (env != null && env.length() >= 32) return env;
+		try {
+			String configured = ApplicationConfig.getProperty("security.jwt.secret");
+			if (configured.length() >= 32) return configured;
+		} catch (RuntimeException ignored) { }
+		return "CHANGE_ME_AMS_JWT_SECRET_AT_LEAST_32_BYTES_LONG";
+	}
 
 	/**
 	 * HMAC-SHA256 ব্যবহার করে JWT টোকেন তৈরি করে

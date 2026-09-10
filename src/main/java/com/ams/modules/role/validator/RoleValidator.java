@@ -13,4 +13,7 @@ public class RoleValidator {
 			throw new ValidationException("Role name is required.");
 		}
 	}
+	public void validateUpdateRole(com.ams.modules.role.dto.UpdateRoleRequest request) {
+		if (request == null || request.getRoleName() == null || request.getRoleName().trim().isEmpty()) throw new ValidationException("Role name is required.");
+	}
 }

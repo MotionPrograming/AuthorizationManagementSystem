@@ -33,6 +33,7 @@ public class TOTPProvider {// Hardened HMAC-SHA256/512 Version
 	 * Timing-Attack Resistant Constant-Time OTP Validation (30s Window)
 	 */
 	public static boolean validateOTP(String secretKeyBase32, int inputCode) {
+		if (secretKeyBase32 == null || inputCode < 0 || inputCode > 999999) return false;
 		long currentInterval = System.currentTimeMillis() / 1000 / TIME_STEP_SECONDS;
 
 		// Clock Skew (Current, Previous, Next)
@@ -90,53 +91,38 @@ public class TOTPProvider {// Hardened HMAC-SHA256/512 Version
 		return MessageDigest.isEqual(aBytes, bBytes);
 	}
 
-	// Base32 Custom Encoder
+	// RFC 4648 Base32 encoder/decoder
 	private static String encodeBase32(byte[] data) {
-		char[] base32Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".toCharArray();
-		StringBuilder sb = new StringBuilder();
-		int buffer = data[0] >> 3;
-		int bitsLeft = 5;
-
+		final char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".toCharArray();
+		StringBuilder out = new StringBuilder((data.length * 8 + 4) / 5);
+		int buffer = 0, bits = 0;
 		for (byte b : data) {
 			buffer = (buffer << 8) | (b & 0xFF);
-			bitsLeft += 8;
-			while (bitsLeft >= 5) {
-				int index = (buffer >> (bitsLeft - 5)) & 0x1F;
-				sb.append(base32Chars[index]);
-				bitsLeft -= 5;
+			bits += 8;
+			while (bits >= 5) {
+				bits -= 5;
+				out.append(chars[(buffer >>> bits) & 31]);
 			}
 		}
-		if (bitsLeft > 0) {
-			int index = (buffer << (5 - bitsLeft)) & 0x1F;
-			sb.append(base32Chars[index]);
-		}
-		return sb.toString();
+		if (bits > 0) out.append(chars[(buffer << (5 - bits)) & 31]);
+		return out.toString();
 	}
 
-	// Base32 Custom Decoder
-	private static byte[] decodeBase32(String base32) {
-		String cleanInput = base32.toUpperCase().replaceAll("[= ]", "");
-		byte[] bytes = new byte[cleanInput.length() * 5 / 8];
-		int buffer = 0;
-		int bitsLeft = 0;
-		int count = 0;
-
-		for (char c : cleanInput.toCharArray()) {
-			int val;
-			if (c >= 'A' && c <= 'Z')
-				val = c - 'A';
-			else if (c >= '2' && c <= '7')
-				val = c - '2' + 26;
-			else
-				continue;
-
+	private static byte[] decodeBase32(String value) {
+		if (value == null || value.trim().isEmpty()) throw new IllegalArgumentException("Invalid Base32 secret");
+		String input = value.replace("=", "").replaceAll("\\s+", "").toUpperCase();
+		byte[] out = new byte[input.length() * 5 / 8];
+		int buffer = 0, bits = 0, index = 0;
+		for (char c : input.toCharArray()) {
+			int val = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(c);
+			if (val < 0) throw new IllegalArgumentException("Invalid Base32 secret");
 			buffer = (buffer << 5) | val;
-			bitsLeft += 5;
-			if (bitsLeft >= 8) {
-				bytes[count++] = (byte) (buffer >> (bitsLeft - 8));
-				bitsLeft -= 8;
+			bits += 5;
+			if (bits >= 8) {
+				bits -= 8;
+				out[index++] = (byte) ((buffer >>> bits) & 0xFF);
 			}
 		}
-		return bytes;
+		return out;
 	}
 }

@@ -71,7 +71,7 @@ public class AccessRequestRepositoryImpl implements AccessRequestRepository {
 	@Override
 	public boolean save(AccessRequest request) {
 		String sql = "INSERT INTO ACCESS_REQUEST (USER_ID, REQUEST_TYPE, REQUEST_STATUS, REQUEST_REASON, CREATED_AT) VALUES (?, ?, ?, ?, ?)";
-		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, new String[] {"REQUEST_ID"})) {
 
 			stmt.setLong(1, request.getUserId());
 			stmt.setString(2, request.getRequestType());
@@ -79,7 +79,13 @@ public class AccessRequestRepositoryImpl implements AccessRequestRepository {
 			stmt.setString(4, request.getRequestReason());
 			stmt.setTimestamp(5, Timestamp.valueOf(request.getCreatedAt()));
 
-			return stmt.executeUpdate() > 0;
+			int affected = stmt.executeUpdate();
+			if (affected == 1) {
+				try (ResultSet keys = stmt.getGeneratedKeys()) {
+					if (keys.next()) request.setRequestId(keys.getLong(1));
+				}
+			}
+			return affected == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;

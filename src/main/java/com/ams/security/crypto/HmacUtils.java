@@ -2,6 +2,7 @@ package com.ams.security.crypto;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.security.MessageDigest;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -24,6 +25,6 @@ public class HmacUtils {
 
 	public static boolean verifyHmac(String data, String secretKey, String expectedHmac) {
 		String calculatedHmac = calculateHmac(data, secretKey);
-		return calculatedHmac.equals(expectedHmac);
+		return MessageDigest.isEqual(calculatedHmac.getBytes(StandardCharsets.UTF_8), expectedHmac.getBytes(StandardCharsets.UTF_8));
 	}
 }

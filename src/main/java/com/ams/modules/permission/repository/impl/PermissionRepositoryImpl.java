@@ -70,13 +70,19 @@ public class PermissionRepositoryImpl implements PermissionRepository {
 	@Override
 	public boolean save(Permission permission) {
 		String sql = "INSERT INTO PERMISSIONS (PERMISSION_NAME, DESCRIPTION, CREATED_AT) VALUES (?, ?, ?)";
-		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, new String[] {"PERMISSION_ID"})) {
 
 			stmt.setString(1, permission.getPermissionName());
 			stmt.setString(2, permission.getDescription());
 			stmt.setTimestamp(3, Timestamp.valueOf(permission.getCreatedAt()));
 
-			return stmt.executeUpdate() > 0;
+			int affected = stmt.executeUpdate();
+			if (affected == 1) {
+				try (ResultSet keys = stmt.getGeneratedKeys()) {
+					if (keys.next()) permission.setPermissionId(keys.getLong(1));
+				}
+			}
+			return affected == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;

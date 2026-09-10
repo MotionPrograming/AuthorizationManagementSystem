@@ -13,4 +13,7 @@ public class PermissionValidator {
 			throw new ValidationException("Permission name is required.");
 		}
 	}
+	public void validateUpdatePermission(com.ams.modules.permission.dto.UpdatePermissionRequest request) {
+		if (request == null || request.getPermissionName() == null || request.getPermissionName().trim().isEmpty()) throw new ValidationException("Permission name is required.");
+	}
 }

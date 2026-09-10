@@ -1,0 +1,8 @@
+package com.ams.modules.passwordreset.repository.impl;
+import java.sql.*;import java.time.LocalDateTime;import java.util.Optional;
+import com.ams.config.DBConnection;import com.ams.modules.passwordreset.repository.PasswordResetRepository;
+public class PasswordResetRepositoryImpl implements PasswordResetRepository {
+ public boolean save(Long userId,String token,String hashToken,LocalDateTime expiry){String sql="INSERT INTO PASSWORD_RESET_TOKEN(USER_ID,TOKEN,EXPIRY_TIME,USED,CREATED_AT) VALUES(?,?,?,0,CURRENT_TIMESTAMP)";try(Connection c=DBConnection.getConnection();PreparedStatement s=c.prepareStatement(sql)){s.setLong(1,userId);s.setString(2,hashToken);s.setTimestamp(3,Timestamp.valueOf(expiry));return s.executeUpdate()==1;}catch(SQLException e){throw new RuntimeException("Failed to create password reset token",e);}}
+ public Optional<Long> findValidUserId(String hashToken){String sql="SELECT USER_ID FROM PASSWORD_RESET_TOKEN WHERE TOKEN=? AND USED=0 AND EXPIRY_TIME>CURRENT_TIMESTAMP ORDER BY CREATED_AT DESC";try(Connection c=DBConnection.getConnection();PreparedStatement s=c.prepareStatement(sql)){s.setString(1,hashToken);try(ResultSet r=s.executeQuery()){return r.next()?Optional.of(r.getLong(1)):Optional.empty();}}catch(SQLException e){throw new RuntimeException("Failed to validate reset token",e);}}
+ public boolean markUsed(String hashToken){String sql="UPDATE PASSWORD_RESET_TOKEN SET USED=1 WHERE TOKEN=? AND USED=0";try(Connection c=DBConnection.getConnection();PreparedStatement s=c.prepareStatement(sql)){s.setString(1,hashToken);return s.executeUpdate()==1;}catch(SQLException e){throw new RuntimeException("Failed to consume reset token",e);}}
+}

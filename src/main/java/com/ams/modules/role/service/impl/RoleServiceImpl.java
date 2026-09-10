@@ -56,6 +56,8 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public boolean updateRole(Long roleId, UpdateRoleRequest request) {
+		roleValidator.validateUpdateRole(request);
+
 		Role role = roleRepository.findById(roleId)
 				.orElseThrow(() -> new ValidationException("Role not found with id: " + roleId));
 
@@ -77,6 +79,7 @@ public class RoleServiceImpl implements RoleService {
 			throw new ValidationException("Role not found with id: " + roleId);
 		}
 
+		if (permissionId == null || permissionId <= 0) throw new ValidationException("Permission ID is required.");
 		roleRepository.assignPermissionToRole(roleId, permissionId);
 	}
 }

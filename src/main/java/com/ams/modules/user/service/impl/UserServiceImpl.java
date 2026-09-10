@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ams.common.exception.ValidationException;
+import com.ams.modules.role.repository.RoleRepository;
 import com.ams.modules.user.dto.CreateUserRequest;
 import com.ams.modules.user.dto.UpdateUserRequest;
 import com.ams.modules.user.dto.UserResponse;
@@ -21,18 +22,27 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final UserValidator userValidator;
 	private final PasswordEncoder passwordEncoder;
+	private final RoleRepository roleRepository;
 
 	public UserServiceImpl(UserRepository userRepository, UserValidator userValidator) {
-		this.userRepository = userRepository;
-		this.userValidator = userValidator;
-		this.passwordEncoder = new BCryptPasswordEncoder();
+		this(userRepository, userValidator, new BCryptPasswordEncoder(), null);
+	}
+
+	public UserServiceImpl(UserRepository userRepository, UserValidator userValidator, RoleRepository roleRepository) {
+		this(userRepository, userValidator, new BCryptPasswordEncoder(), roleRepository);
 	}
 
 	public UserServiceImpl(UserRepository userRepository, UserValidator userValidator,
 			PasswordEncoder passwordEncoder) {
+		this(userRepository, userValidator, passwordEncoder, null);
+	}
+
+	public UserServiceImpl(UserRepository userRepository, UserValidator userValidator, PasswordEncoder passwordEncoder,
+			RoleRepository roleRepository) {
 		this.userRepository = userRepository;
 		this.userValidator = userValidator;
 		this.passwordEncoder = passwordEncoder;
+		this.roleRepository = roleRepository;
 	}
 
 	@Override
@@ -55,7 +65,13 @@ public class UserServiceImpl implements UserService {
 		user.setCreatedAt(LocalDateTime.now());
 		user.setUpdatedAt(LocalDateTime.now());
 
-		userRepository.save(user);
+		if (!userRepository.save(user))
+			throw new ValidationException("Unable to create user.");
+		if (roleRepository != null) {
+			String defaultRole = userRepository.countUsers() == 1 ? "ADMIN" : "EMPLOYEE";
+			roleRepository.findByRoleName(defaultRole)
+					.ifPresent(role -> userRepository.assignRoleToUser(user.getUserId(), role.getRoleId()));
+		}
 
 		return UserMapper.toUserResponse(user);
 	}

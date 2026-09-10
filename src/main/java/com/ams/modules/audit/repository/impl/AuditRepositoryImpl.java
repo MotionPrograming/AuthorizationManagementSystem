@@ -72,7 +72,7 @@ public class AuditRepositoryImpl implements AuditRepository {
 	@Override
 	public boolean save(AuditLog auditLog) {
 		String sql = "INSERT INTO AUDIT_LOG (USER_ID, ACTION, DESCRIPTION, IP_ADDRESS, CREATED_AT) VALUES (?, ?, ?, ?, ?)";
-		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, new String[] {"AUDIT_ID"})) {
 
 			if (auditLog.getUserId() != null) {
 				stmt.setLong(1, auditLog.getUserId());
@@ -84,7 +84,13 @@ public class AuditRepositoryImpl implements AuditRepository {
 			stmt.setString(4, auditLog.getIpAddress());
 			stmt.setTimestamp(5, Timestamp.valueOf(auditLog.getCreatedAt()));
 
-			return stmt.executeUpdate() > 0;
+			int affected = stmt.executeUpdate();
+			if (affected == 1) {
+				try (ResultSet keys = stmt.getGeneratedKeys()) {
+					if (keys.next()) auditLog.setAuditId(keys.getLong(1));
+				}
+			}
+			return affected == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;

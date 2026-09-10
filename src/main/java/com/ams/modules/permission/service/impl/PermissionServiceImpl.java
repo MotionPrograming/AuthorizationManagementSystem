@@ -57,6 +57,8 @@ public class PermissionServiceImpl implements PermissionService {
 
 	@Override
 	public boolean updatePermission(Long permissionId, UpdatePermissionRequest request) {
+		permissionValidator.validateUpdatePermission(request);
+
 		Permission permission = permissionRepository.findById(permissionId)
 				.orElseThrow(() -> new ValidationException("Permission not found with id: " + permissionId));
 

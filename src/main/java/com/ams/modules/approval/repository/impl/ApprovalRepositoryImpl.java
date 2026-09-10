@@ -88,7 +88,7 @@ public class ApprovalRepositoryImpl implements ApprovalRepository {
 	@Override
 	public boolean save(Approval approval) {
 		String sql = "INSERT INTO APPROVAL (REQUEST_ID, APPROVER_ID, DECISION, COMMENTS, APPROVED_AT) VALUES (?, ?, ?, ?, ?)";
-		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, new String[] {"APPROVAL_ID"})) {
 
 			stmt.setLong(1, approval.getRequestId());
 			stmt.setLong(2, approval.getApproverId());
@@ -96,7 +96,13 @@ public class ApprovalRepositoryImpl implements ApprovalRepository {
 			stmt.setString(4, approval.getComments());
 			stmt.setTimestamp(5, Timestamp.valueOf(approval.getApprovedAt()));
 
-			return stmt.executeUpdate() > 0;
+			int affected = stmt.executeUpdate();
+			if (affected == 1) {
+				try (ResultSet keys = stmt.getGeneratedKeys()) {
+					if (keys.next()) approval.setApprovalId(keys.getLong(1));
+				}
+			}
+			return affected == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;

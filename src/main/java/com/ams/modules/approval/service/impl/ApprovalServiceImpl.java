@@ -12,21 +12,31 @@ import com.ams.modules.approval.mapper.ApprovalMapper;
 import com.ams.modules.approval.repository.ApprovalRepository;
 import com.ams.modules.approval.service.ApprovalService;
 import com.ams.modules.approval.validator.ApprovalValidator;
+import com.ams.modules.accessrequest.repository.impl.AccessRequestRepositoryImpl;
+import com.ams.modules.user.repository.impl.UserRepositoryImpl;
 
 public class ApprovalServiceImpl implements ApprovalService {
 
 	private final ApprovalRepository approvalRepository;
 	private final ApprovalValidator approvalValidator;
+	private final AccessRequestRepositoryImpl accessRequestRepository;
+	private final UserRepositoryImpl userRepository;
 
 	public ApprovalServiceImpl(ApprovalRepository approvalRepository, ApprovalValidator approvalValidator) {
 		this.approvalRepository = approvalRepository;
 		this.approvalValidator = approvalValidator;
+		this.accessRequestRepository = new AccessRequestRepositoryImpl();
+		this.userRepository = new UserRepositoryImpl();
 	}
 
 	@Override
 	public ApprovalResponse processApproval(CreateApprovalRequest request) {
 		approvalValidator.validateCreateApproval(request);
 
+		if (userRepository.findById(request.getApproverId()).isEmpty()) throw new ValidationException("Approver not found with id: " + request.getApproverId());
+		if (accessRequestRepository.findById(request.getRequestId()).isEmpty()) {
+			throw new ValidationException("Access request not found with id: " + request.getRequestId());
+		}
 		if (approvalRepository.findByRequestId(request.getRequestId()).isPresent()) {
 			throw new ValidationException("An approval decision has already been recorded for this request ID.");
 		}
@@ -38,7 +48,8 @@ public class ApprovalServiceImpl implements ApprovalService {
 		approval.setComments(request.getComments());
 		approval.setApprovedAt(LocalDateTime.now());
 
-		approvalRepository.save(approval);
+		if (!approvalRepository.save(approval)) throw new ValidationException("Unable to save approval decision.");
+		accessRequestRepository.updateStatus(request.getRequestId(), request.getDecision());
 
 		return ApprovalMapper.toApprovalResponse(approval);
 	}

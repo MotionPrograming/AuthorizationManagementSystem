@@ -12,21 +12,25 @@ import com.ams.modules.accessrequest.mapper.AccessRequestMapper;
 import com.ams.modules.accessrequest.repository.AccessRequestRepository;
 import com.ams.modules.accessrequest.service.AccessRequestService;
 import com.ams.modules.accessrequest.validator.AccessRequestValidator;
+import com.ams.modules.user.repository.impl.UserRepositoryImpl;
 
 public class AccessRequestServiceImpl implements AccessRequestService {
 
 	private final AccessRequestRepository repository;
 	private final AccessRequestValidator validator;
+	private final UserRepositoryImpl userRepository;
 
 	public AccessRequestServiceImpl(AccessRequestRepository repository, AccessRequestValidator validator) {
 		this.repository = repository;
 		this.validator = validator;
+		this.userRepository = new UserRepositoryImpl();
 	}
 
 	@Override
 	public AccessRequestResponse createRequest(AccessRequestRequest request) {
 		validator.validate(request);
 
+		if (userRepository.findById(request.getUserId()).isEmpty()) throw new ValidationException("User not found with id: " + request.getUserId());
 		AccessRequest accessRequest = new AccessRequest();
 		accessRequest.setUserId(request.getUserId());
 		accessRequest.setRequestType(request.getRequestType());

@@ -1,11 +1,11 @@
 package com.ams.modules.user.controller;
 
 import java.io.IOException;
-import java.util.List;
 
 import com.ams.common.util.JsonUtil;
+import com.ams.modules.role.repository.impl.RoleRepositoryImpl;
 import com.ams.modules.user.dto.CreateUserRequest;
-import com.ams.modules.user.dto.UserResponse;
+import com.ams.modules.user.dto.UpdateUserRequest;
 import com.ams.modules.user.repository.impl.UserRepositoryImpl;
 import com.ams.modules.user.service.UserService;
 import com.ams.modules.user.service.impl.UserServiceImpl;
@@ -19,65 +19,107 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet("/api/v1/users/*")
 public class UserController extends HttpServlet {
-
 	private static final long serialVersionUID = 1L;
-	private UserService userService;
+	private UserService service;
 
 	@Override
 	public void init() throws ServletException {
-		this.userService = new UserServiceImpl(new UserRepositoryImpl(), new UserValidator());
+		service = new UserServiceImpl(new UserRepositoryImpl(), new UserValidator(), new RoleRepositoryImpl());
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setContentType("application/json");
-		resp.setCharacterEncoding("UTF-8");
-
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		try {
-			List<UserResponse> users = userService.getAllUsers();
-			resp.setStatus(HttpServletResponse.SC_OK);
-			resp.getWriter().write(JsonUtil.toJson(users));
+			Long id = id(req);
+			write(resp, id == null ? service.getAllUsers() : service.getUserById(id), 200);
 		} catch (Exception e) {
-			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			resp.getWriter().write("{\"status\": \"ERROR\", \"message\": \"" + e.getMessage() + "\"}");
+			error(resp, e, 404);
 		}
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setContentType("application/json");
-		resp.setCharacterEncoding("UTF-8");
-
-		String pathInfo = req.getPathInfo();
-
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		try {
-			// POST /api/v1/users/assign-role
-			if (pathInfo != null && pathInfo.equals("/assign-role")) {
-				Long userId = Long.parseLong(req.getParameter("userId"));
-				Long roleId = Long.parseLong(req.getParameter("roleId"));
-
-				userService.assignRoleToUser(userId, roleId);
-
-				resp.setStatus(HttpServletResponse.SC_OK);
-				resp.getWriter()
-						.write("{\"status\": \"SUCCESS\", \"message\": \"Role assigned to user successfully.\"}");
+			if ("/assign-role".equals(req.getPathInfo())) {
+				service.assignRoleToUser(requiredLong(req, "userId"), requiredLong(req, "roleId"));
+				write(resp, JsonUtil.response("SUCCESS", "Role assigned successfully"), 200);
 				return;
 			}
-
-			// Base POST /api/v1/users (Create User)
-			CreateUserRequest createUserRequest = new CreateUserRequest();
-			createUserRequest.setUsername(req.getParameter("username"));
-			createUserRequest.setEmail(req.getParameter("email"));
-			createUserRequest.setPassword(req.getParameter("password"));
-			createUserRequest.setFullName(req.getParameter("fullName"));
-
-			UserResponse createdUser = userService.createUser(createUserRequest);
-
-			resp.setStatus(HttpServletResponse.SC_CREATED);
-			resp.getWriter().write("{\"status\": \"SUCCESS\", \"username\": \"" + createdUser.getUsername() + "\"}");
+			CreateUserRequest r = new CreateUserRequest();
+			r.setUsername(req.getParameter("username"));
+			r.setEmail(req.getParameter("email"));
+			r.setPassword(req.getParameter("password"));
+			r.setFullName(req.getParameter("fullName"));
+			write(resp, service.createUser(r), 201);
 		} catch (Exception e) {
-			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			resp.getWriter().write("{\"status\": \"ERROR\", \"message\": \"" + e.getMessage() + "\"}");
+			error(resp, e, 400);
 		}
+	}
+
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		try {
+			Long id = requiredLong(req, "id");
+			UpdateUserRequest r = new UpdateUserRequest();
+			r.setEmail(req.getParameter("email"));
+			r.setFullName(req.getParameter("fullName"));
+			r.setStatus(req.getParameter("status"));
+			if (!service.updateUser(id, r)) {
+				error(resp, new RuntimeException("User not found"), 404);
+				return;
+			}
+			write(resp, JsonUtil.response("SUCCESS", "User updated successfully"), 200);
+		} catch (Exception e) {
+			error(resp, e, 400);
+		}
+	}
+
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		try {
+			if (!service.deleteUser(requiredLong(req, "id"))) {
+				error(resp, new RuntimeException("User not found"), 404);
+				return;
+			}
+			write(resp, JsonUtil.response("SUCCESS", "User deleted successfully"), 200);
+		} catch (Exception e) {
+			error(resp, e, 400);
+		}
+	}
+
+	private Long id(HttpServletRequest req) {
+		String v = req.getPathInfo();
+		if (v == null || v.length() <= 1)
+			return null;
+		try {
+			return Long.valueOf(v.substring(1));
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Invalid user id");
+		}
+	}
+
+	private Long requiredLong(HttpServletRequest req, String name) {
+		String v = req.getParameter(name);
+		if (v == null && "id".equals(name))
+			v = req.getPathInfo() == null ? null : req.getPathInfo().substring(1);
+		try {
+			return Long.valueOf(v);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(name + " is required");
+		}
+	}
+
+	private void write(HttpServletResponse r, Object o, int status) throws IOException {
+		r.setContentType("application/json");
+		r.setCharacterEncoding("UTF-8");
+		r.setStatus(status);
+		r.getWriter().write(JsonUtil.toJson(o));
+	}
+
+	private void error(HttpServletResponse r, Exception e, int status) throws IOException {
+		r.setContentType("application/json");
+		r.setCharacterEncoding("UTF-8");
+		r.setStatus(status);
+		r.getWriter().write(JsonUtil.response("ERROR", e.getMessage() == null ? "Request failed" : e.getMessage()));
 	}
 }

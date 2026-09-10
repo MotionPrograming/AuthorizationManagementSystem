@@ -70,13 +70,19 @@ public class RoleRepositoryImpl implements RoleRepository {
 	@Override
 	public boolean save(Role role) {
 		String sql = "INSERT INTO ROLES (ROLE_NAME, DESCRIPTION, CREATED_AT) VALUES (?, ?, ?)";
-		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, new String[] {"ROLE_ID"})) {
 
 			stmt.setString(1, role.getRoleName());
 			stmt.setString(2, role.getDescription());
 			stmt.setTimestamp(3, Timestamp.valueOf(role.getCreatedAt()));
 
-			return stmt.executeUpdate() > 0;
+			int affected = stmt.executeUpdate();
+			if (affected == 1) {
+				try (ResultSet keys = stmt.getGeneratedKeys()) {
+					if (keys.next()) role.setRoleId(keys.getLong(1));
+				}
+			}
+			return affected == 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
