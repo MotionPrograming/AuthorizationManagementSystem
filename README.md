@@ -6,8 +6,6 @@
 
 ---
 
-> **GitHub Mermaid Compatibility:** All architecture diagrams in this README use GitHub-compatible Mermaid syntax (` ```mermaid `). Diagram labels avoid HTML line breaks and problematic presentation characters, and subgraphs use explicit structure to keep GitHub's Mermaid/SVG renderer stable.
-
 ## 📌 Overview
 
 **Authorization Management System (AMS)** is designed as a reusable security and authorization platform for applications that need centralized identity and access management.
@@ -43,28 +41,27 @@ The goal of AMS is to provide a centralized platform for managing:
 
 ```mermaid
 flowchart TB
-
-AMS[" Authorization Management System"]
-
-USER[" Users"]
-ROLE[" Roles"]
-PERM[" Permissions"]
-AUTHN[" Authentication"]
-AUTHZ["️ Authorization"]
-ACCESS[" Access Requests"]
-APPROVAL[" Approval Workflows"]
-AUDIT[" Security Auditing"]
-REPORT[" Reporting"]
-
-AMS --> USER
-AMS --> ROLE
-AMS --> PERM
-AMS --> AUTHN
-AMS --> AUTHZ
-AMS --> ACCESS
-AMS --> APPROVAL
-AMS --> AUDIT
-AMS --> REPORT
+    AMS["Authorization Management System"]
+    
+    USER["Users"]
+    ROLE["Roles"]
+    PERM["Permissions"]
+    AUTHN["Authentication"]
+    AUTHZ["Authorization"]
+    ACCESS["Access Requests"]
+    APPROVAL["Approval Workflows"]
+    AUDIT["Security Auditing"]
+    REPORT["Reporting"]
+    
+    AMS --> USER
+    AMS --> ROLE
+    AMS --> PERM
+    AMS --> AUTHN
+    AMS --> AUTHZ
+    AMS --> ACCESS
+    AMS --> APPROVAL
+    AMS --> AUDIT
+    AMS --> REPORT
 ```
 
 ---
@@ -96,46 +93,37 @@ AMS --> REPORT
 
 ```mermaid
 flowchart LR
-
-CLIENT[" Client"]
-
-LOGIN["Login Request"]
-
-AUTH["Authentication Service"]
-
-CRED["Validate Username - and Password"]
-
-CHECK{"2FA Enabled?"}
-
-SESSION["Create Session"]
-JWT["Generate JWT"]
-
-TOTP["Verify TOTP"]
-BACKUP["Verify Backup Code"]
-
-ACCESS[" Authenticated Access"]
-DENIED[" Access Denied"]
-
-CLIENT --> LOGIN
-LOGIN --> AUTH
-AUTH --> CRED
-CRED --> CHECK
-
-CHECK -->|No| SESSION
-CHECK -->|No| JWT
-
-CHECK -->|Yes| TOTP
-
-TOTP -->|Valid| SESSION
-TOTP -->|Valid| JWT
-TOTP -->|Invalid| BACKUP
-
-BACKUP -->|Valid| SESSION
-BACKUP -->|Valid| JWT
-BACKUP -->|Invalid| DENIED
-
-SESSION --> ACCESS
-JWT --> ACCESS
+    CLIENT["Client"]
+    LOGIN["Login Request"]
+    AUTH["Authentication Service"]
+    CRED["Validate Username & Password"]
+    CHECK{"2FA Enabled?"}
+    SESSION["Create Session"]
+    JWT["Generate JWT"]
+    TOTP["Verify TOTP"]
+    BACKUP["Verify Backup Code"]
+    ACCESS["Authenticated Access"]
+    DENIED["Access Denied"]
+    
+    CLIENT --> LOGIN
+    LOGIN --> AUTH
+    AUTH --> CRED
+    CRED --> CHECK
+    
+    CHECK -->|No| SESSION
+    CHECK -->|No| JWT
+    CHECK -->|Yes| TOTP
+    
+    TOTP -->|Valid| SESSION
+    TOTP -->|Valid| JWT
+    TOTP -->|Invalid| BACKUP
+    
+    BACKUP -->|Valid| SESSION
+    BACKUP -->|Valid| JWT
+    BACKUP -->|Invalid| DENIED
+    
+    SESSION --> ACCESS
+    JWT --> ACCESS
 ```
 
 ---
@@ -146,26 +134,25 @@ AMS supports **JSON Web Token (JWT)** authentication for protected application r
 
 ```mermaid
 sequenceDiagram
-
-participant C as Client
-participant A as Authentication Service
-participant J as JwtTokenProvider
-participant F as Authentication Filter
-participant Z as Authorization Filter
-participant R as Protected Resource
-
-C->>A: Login
-A->>A: Validate Credentials
-A->>J: Generate JWT
-J-->>A: Signed JWT
-A-->>C: JWT Token
-
-C->>F: Protected Request + JWT
-F->>F: Validate JWT
-F->>Z: Authenticated Request
-Z->>Z: Validate Role & Permission
-Z->>R: Authorized Request
-R-->>C: Response
+    participant C as Client
+    participant A as Authentication Service
+    participant J as JwtTokenProvider
+    participant F as Authentication Filter
+    participant Z as Authorization Filter
+    participant R as Protected Resource
+    
+    C->>A: Login
+    A->>A: Validate Credentials
+    A->>J: Generate JWT
+    J-->>A: Signed JWT
+    A-->>C: JWT Token
+    
+    C->>F: Protected Request + JWT
+    F->>F: Validate JWT
+    F->>Z: Authenticated Request
+    Z->>Z: Validate Role & Permission
+    Z->>R: Authorized Request
+    R-->>C: Response
 ```
 
 JWT functionality is provided through:
@@ -200,33 +187,32 @@ Compatible authenticator applications include:
 
 ```mermaid
 flowchart TB
-
-TWOFA[" Two-Factor Authentication"]
-
-SETUP["2FA Setup"]
-SECRET["TOTP Secret"]
-QR["QR Code"]
-
-ENABLE["Enable 2FA"]
-VERIFY["Verify OTP"]
-
-BACKUP["Backup Code Manager"]
-PROVIDER["TOTP Provider"]
-SERVICE["TwoFactorAuthService"]
-RESPONSE["TwoFactorResponse"]
-
-TWOFA --> SETUP
-SETUP --> SECRET
-SETUP --> QR
-
-TWOFA --> ENABLE
-ENABLE --> SERVICE
-
-SERVICE --> PROVIDER
-SERVICE --> BACKUP
-SERVICE --> RESPONSE
-
-VERIFY --> SERVICE
+    TWOFA["Two-Factor Authentication"]
+    
+    SETUP["2FA Setup"]
+    SECRET["TOTP Secret"]
+    QR["QR Code"]
+    
+    ENABLE["Enable 2FA"]
+    VERIFY["Verify OTP"]
+    
+    BACKUP["Backup Code Manager"]
+    PROVIDER["TOTP Provider"]
+    SERVICE["TwoFactorAuthService"]
+    RESPONSE["TwoFactorResponse"]
+    
+    TWOFA --> SETUP
+    SETUP --> SECRET
+    SETUP --> QR
+    
+    TWOFA --> ENABLE
+    ENABLE --> SERVICE
+    
+    SERVICE --> PROVIDER
+    SERVICE --> BACKUP
+    SERVICE --> RESPONSE
+    
+    VERIFY --> SERVICE
 ```
 
 ## 2FA Components
@@ -262,24 +248,23 @@ AMS includes cryptographic utilities for authentication, integrity protection, a
 
 ```mermaid
 flowchart LR
-
-SECURITY["Security Layer"]
-
-HASH["HashUtils - SHA-256"]
-HMAC["HmacUtils - HMAC-SHA256"]
-JWT["JwtTokenProvider - JWT"]
-
-PASSWORD["Password Security"]
-INTEGRITY["Data Integrity"]
-TOKEN["Token Security"]
-
-SECURITY --> HASH
-SECURITY --> HMAC
-SECURITY --> JWT
-
-HASH --> PASSWORD
-HMAC --> INTEGRITY
-JWT --> TOKEN
+    SECURITY["Security Layer"]
+    
+    HASH["HashUtils - SHA-256"]
+    HMAC["HmacUtils - HMAC-SHA256"]
+    JWT["JwtTokenProvider - JWT"]
+    
+    PASSWORD["Password Security"]
+    INTEGRITY["Data Integrity"]
+    TOKEN["Token Security"]
+    
+    SECURITY --> HASH
+    SECURITY --> HMAC
+    SECURITY --> JWT
+    
+    HASH --> PASSWORD
+    HMAC --> INTEGRITY
+    JWT --> TOKEN
 ```
 
 ---
@@ -288,23 +273,22 @@ JWT --> TOKEN
 
 ```mermaid
 flowchart TB
-
-REQUEST["HTTP Request"]
-
-AUTHF["AuthenticationFilter"]
-AUTHZF["AuthorizationFilter"]
-CORS["CorsFilter"]
-RATE["RateLimitingFilter"]
-HEADERS["SecurityHeadersFilter"]
-
-CONTROLLER["Controller"]
-
-REQUEST --> CORS
-CORS --> RATE
-RATE --> HEADERS
-HEADERS --> AUTHF
-AUTHF --> AUTHZF
-AUTHZF --> CONTROLLER
+    REQUEST["HTTP Request"]
+    
+    CORS["CorsFilter"]
+    RATE["RateLimitingFilter"]
+    HEADERS["SecurityHeadersFilter"]
+    AUTHF["AuthenticationFilter"]
+    AUTHZF["AuthorizationFilter"]
+    
+    CONTROLLER["Controller"]
+    
+    REQUEST --> CORS
+    CORS --> RATE
+    RATE --> HEADERS
+    HEADERS --> AUTHF
+    AUTHF --> AUTHZF
+    AUTHZF --> CONTROLLER
 ```
 
 ### Authentication Filter
@@ -335,38 +319,36 @@ AMS follows a layered RBAC model.
 
 ```mermaid
 flowchart LR
-
-USER[" User"]
-UR["User Role"]
-ROLE[" Role"]
-RP["Role Permission"]
-PERM[" Permission"]
-RESOURCE[" Resource Access"]
-
-USER --> UR
-UR --> ROLE
-ROLE --> RP
-RP --> PERM
-PERM --> RESOURCE
+    USER["User"]
+    UR["User-Role Mapping"]
+    ROLE["Role"]
+    RP["Role-Permission Mapping"]
+    PERM["Permission"]
+    RESOURCE["Resource Access"]
+    
+    USER --> UR
+    UR --> ROLE
+    ROLE --> RP
+    RP --> PERM
+    PERM --> RESOURCE
 ```
 
 ## RBAC Example
 
 ```mermaid
 flowchart TB
-
-ADMIN[" Admin"]
-MANAGER[" Manager"]
-EMPLOYEE[" Employee"]
-
-ADMIN --> USERS["Manage Users"]
-ADMIN --> ROLES["Manage Roles"]
-ADMIN --> PERMISSIONS["Manage Permissions"]
-
-MANAGER --> APPROVE["Approve Requests"]
-MANAGER --> REPORTS["View Reports"]
-
-EMPLOYEE --> ACCESS["Assigned Resource Access"]
+    ADMIN["Admin"]
+    MANAGER["Manager"]
+    EMPLOYEE["Employee"]
+    
+    ADMIN --> USERS["Manage Users"]
+    ADMIN --> ROLES["Manage Roles"]
+    ADMIN --> PERMISSIONS["Manage Permissions"]
+    
+    MANAGER --> APPROVE["Approve Requests"]
+    MANAGER --> REPORTS["View Reports"]
+    
+    EMPLOYEE --> ACCESS["Assigned Resource Access"]
 ```
 
 ## RBAC Manager
@@ -396,17 +378,16 @@ AMS supports fine-grained permissions.
 
 ```mermaid
 flowchart LR
-
-ROLE["Role"]
-PERMISSION["Permission"]
-RESOURCE["Resource"]
-ACTION["Action"]
-ACCESS["Access Decision"]
-
-ROLE --> PERMISSION
-PERMISSION --> RESOURCE
-RESOURCE --> ACTION
-ACTION --> ACCESS
+    ROLE["Role"]
+    PERMISSION["Permission"]
+    RESOURCE["Resource"]
+    ACTION["Action"]
+    ACCESS["Access Decision"]
+    
+    ROLE --> PERMISSION
+    PERMISSION --> RESOURCE
+    RESOURCE --> ACTION
+    ACTION --> ACCESS
 ```
 
 A permission can conceptually represent:
@@ -440,17 +421,16 @@ AMS provides controlled access-request workflows.
 
 ```mermaid
 flowchart LR
-
-EMPLOYEE[" Employee"]
-REQUEST[" Access Request"]
-MANAGER[" Manager Review"]
-ADMIN[" Admin Approval"]
-GRANT[" Access Granted"]
-
-EMPLOYEE --> REQUEST
-REQUEST --> MANAGER
-MANAGER --> ADMIN
-ADMIN --> GRANT
+    EMPLOYEE["Employee"]
+    REQUEST["Access Request"]
+    MANAGER["Manager Review"]
+    ADMIN["Admin Approval"]
+    GRANT["Access Granted"]
+    
+    EMPLOYEE --> REQUEST
+    REQUEST --> MANAGER
+    MANAGER --> ADMIN
+    ADMIN --> GRANT
 ```
 
 ---
@@ -469,20 +449,19 @@ AMS supports approval-based access management.
 
 ```mermaid
 stateDiagram-v2
-
-[*] --> Submitted
-
-Submitted --> Pending
-
-Pending --> Approved
-Pending --> Rejected
-
-Approved --> AccessGranted
-Rejected --> Closed
-
-AccessGranted --> Closed
-
-Closed --> [*]
+    [*] --> Submitted
+    
+    Submitted --> Pending
+    
+    Pending --> Approved
+    Pending --> Rejected
+    
+    Approved --> AccessGranted
+    Rejected --> Closed
+    
+    AccessGranted --> Closed
+    
+    Closed --> [*]
 ```
 
 ---
@@ -505,15 +484,14 @@ AMS tracks security-sensitive activities for accountability.
 
 ```mermaid
 flowchart LR
-
-ACTION[" User Action"]
-EVENT["Application Event"]
-SERVICE["Audit Service"]
-LOG[" Audit Log"]
-
-ACTION --> EVENT
-EVENT --> SERVICE
-SERVICE --> LOG
+    ACTION["User Action"]
+    EVENT["Application Event"]
+    SERVICE["Audit Service"]
+    LOG["Audit Log"]
+    
+    ACTION --> EVENT
+    EVENT --> SERVICE
+    SERVICE --> LOG
 ```
 
 ## Audit Payload
@@ -546,18 +524,17 @@ AMS provides reporting capabilities for access and security management.
 
 ```mermaid
 flowchart TB
-
-REPORT[" Reporting System"]
-
-USER_REPORT["User Access Reports"]
-ROLE_REPORT["Role Reports"]
-PERM_REPORT["Permission Reports"]
-AUDIT_REPORT["Audit Reports"]
-
-REPORT --> USER_REPORT
-REPORT --> ROLE_REPORT
-REPORT --> PERM_REPORT
-REPORT --> AUDIT_REPORT
+    REPORT["Reporting System"]
+    
+    USER_REPORT["User Access Reports"]
+    ROLE_REPORT["Role Reports"]
+    PERM_REPORT["Permission Reports"]
+    AUDIT_REPORT["Audit Reports"]
+    
+    REPORT --> USER_REPORT
+    REPORT --> ROLE_REPORT
+    REPORT --> PERM_REPORT
+    REPORT --> AUDIT_REPORT
 ```
 
 ---
@@ -576,22 +553,21 @@ Conceptually:
 
 ```mermaid
 flowchart LR
-
-LOGIN["Login"]
-AUTH["Authentication"]
-SESSION["SessionManager"]
-ACTIVE["Active Session"]
-REQUEST["Protected Request"]
-VALIDATE["Session Validation"]
-ACCESS["Authorized Access"]
-
-LOGIN --> AUTH
-AUTH --> SESSION
-SESSION --> ACTIVE
-
-ACTIVE --> REQUEST
-REQUEST --> VALIDATE
-VALIDATE --> ACCESS
+    LOGIN["Login"]
+    AUTH["Authentication"]
+    SESSION["SessionManager"]
+    ACTIVE["Active Session"]
+    REQUEST["Protected Request"]
+    VALIDATE["Session Validation"]
+    ACCESS["Authorized Access"]
+    
+    LOGIN --> AUTH
+    AUTH --> SESSION
+    SESSION --> ACTIVE
+    
+    ACTIVE --> REQUEST
+    REQUEST --> VALIDATE
+    VALIDATE --> ACCESS
 ```
 
 ---
@@ -600,40 +576,39 @@ VALIDATE --> ACCESS
 
 ```mermaid
 flowchart TB
-
-CLIENT[" User / Client"]
-
-UI["️ JSP Web Interface"]
-
-SECURITY[" Security Layer"]
-
-CONTROLLER[" Controller Layer"]
-
-SERVICE["️ Service Layer"]
-
-REPOSITORY["️ Repository Layer"]
-
-DATABASE[(" MySQL Database")]
-
-CLIENT <--> UI
-UI --> SECURITY
-SECURITY --> CONTROLLER
-CONTROLLER --> SERVICE
-SERVICE --> REPOSITORY
-REPOSITORY --> DATABASE
-
+    CLIENT["User / Client"]
+    
+    UI["JSP Web Interface"]
+    
+    SECURITY["Security Layer"]
+    
+    CONTROLLER["Controller Layer"]
+    
+    SERVICE["Service Layer"]
+    
+    REPOSITORY["Repository Layer"]
+    
+    DATABASE[("MySQL Database")]
+    
+    CLIENT <--> UI
+    UI --> SECURITY
+    SECURITY --> CONTROLLER
+    CONTROLLER --> SERVICE
+    SERVICE --> REPOSITORY
+    REPOSITORY --> DATABASE
+    
     subgraph SECURITY_MODULE["Security Layer"]
-    AUTH["Authentication"]
-    AUTHZ["Authorization"]
-    JWT["JWT"]
-    TOTP["2FA / TOTP"]
-    RBAC["RBAC"]
-    SESSION["Session Management"]
-    FILTER["Security Filters"]
-    CRYPTO["Cryptography"]
+        AUTH["Authentication"]
+        AUTHZ["Authorization"]
+        JWT_SEC["JWT"]
+        TOTP_SEC["2FA / TOTP"]
+        RBAC_SEC["RBAC"]
+        SESSION_SEC["Session Management"]
+        FILTER["Security Filters"]
+        CRYPTO["Cryptography"]
     end
-
-SECURITY --> SECURITY_MODULE
+    
+    SECURITY --> SECURITY_MODULE
 ```
 
 ---
@@ -642,38 +617,37 @@ SECURITY --> SECURITY_MODULE
 
 ```mermaid
 sequenceDiagram
-
-participant U as Client
-participant AF as Authentication Filter
-participant AZ as Authorization Filter
-participant C as Controller
-participant S as Service
-participant R as Repository
-participant DB as MySQL
-
-U->>AF: HTTP Request
-
-AF->>AF: Validate Session / JWT
-
-AF->>AZ: Authenticated Request
-
-AZ->>AZ: Check Role & Permission
-
-AZ->>C: Authorized Request
-
-C->>S: Execute Business Logic
-
-S->>R: Fetch / Update Data
-
-R->>DB: Execute SQL
-
-DB-->>R: Return Data
-
-R-->>S: Entity Data
-
-S-->>C: DTO Response
-
-C-->>U: HTTP Response
+    participant U as Client
+    participant AF as Authentication Filter
+    participant AZ as Authorization Filter
+    participant C as Controller
+    participant S as Service
+    participant R as Repository
+    participant DB as MySQL
+    
+    U->>AF: HTTP Request
+    
+    AF->>AF: Validate Session / JWT
+    
+    AF->>AZ: Authenticated Request
+    
+    AZ->>AZ: Check Role & Permission
+    
+    AZ->>C: Authorized Request
+    
+    C->>S: Execute Business Logic
+    
+    S->>R: Fetch / Update Data
+    
+    R->>DB: Execute SQL
+    
+    DB-->>R: Return Data
+    
+    R-->>S: Entity Data
+    
+    S-->>C: DTO Response
+    
+    C-->>U: HTTP Response
 ```
 
 ---
@@ -695,24 +669,23 @@ AMS provides centralized user management.
 
 ```mermaid
 flowchart LR
-
-ADMIN[" Administrator"]
-
-CREATE["Create"]
-UPDATE["Update"]
-DELETE["Delete"]
-STATUS["Activate / Deactivate"]
-ROLE["Assign Roles"]
-ACCESS["Manage Access"]
-TWOFA["Manage 2FA"]
-
-ADMIN --> CREATE
-ADMIN --> UPDATE
-ADMIN --> DELETE
-ADMIN --> STATUS
-ADMIN --> ROLE
-ADMIN --> ACCESS
-ADMIN --> TWOFA
+    ADMIN["Administrator"]
+    
+    CREATE["Create"]
+    UPDATE["Update"]
+    DELETE["Delete"]
+    STATUS["Activate / Deactivate"]
+    ROLE["Assign Roles"]
+    ACCESS["Manage Access"]
+    TWOFA["Manage 2FA"]
+    
+    ADMIN --> CREATE
+    ADMIN --> UPDATE
+    ADMIN --> DELETE
+    ADMIN --> STATUS
+    ADMIN --> ROLE
+    ADMIN --> ACCESS
+    ADMIN --> TWOFA
 ```
 
 ---
@@ -723,26 +696,25 @@ AMS is organized around independent business modules.
 
 ```mermaid
 flowchart TB
-
-AMS[" AMS"]
-
-ACCESS["Access Request"]
-APPROVAL["Approval"]
-AUDIT["Audit"]
-AUTH["Authentication"]
-PERMISSION["Permission"]
-REPORT["Report"]
-ROLE["Role"]
-USER["User"]
-
-AMS --> ACCESS
-AMS --> APPROVAL
-AMS --> AUDIT
-AMS --> AUTH
-AMS --> PERMISSION
-AMS --> REPORT
-AMS --> ROLE
-AMS --> USER
+    AMS["AMS"]
+    
+    ACCESS["Access Request"]
+    APPROVAL["Approval"]
+    AUDIT["Audit"]
+    AUTH["Authentication"]
+    PERMISSION["Permission"]
+    REPORT["Report"]
+    ROLE["Role"]
+    USER["User"]
+    
+    AMS --> ACCESS
+    AMS --> APPROVAL
+    AMS --> AUDIT
+    AMS --> AUTH
+    AMS --> PERMISSION
+    AMS --> REPORT
+    AMS --> ROLE
+    AMS --> USER
 ```
 
 ---
@@ -776,45 +748,44 @@ This structure supports:
 
 ```mermaid
 flowchart TB
-
-SECURITY[" Security"]
-
-AUTHN["Authentication"]
-AUTHZ["Authorization"]
-CRYPTO["Cryptography"]
-FILTER["Security Filters"]
-PASSWORD["Password Management"]
-RBAC["RBAC"]
-SESSION["Session Management"]
-TWOFA["Two-Factor Authentication"]
-
-SECURITY --> AUTHN
-SECURITY --> AUTHZ
-SECURITY --> CRYPTO
-SECURITY --> FILTER
-SECURITY --> PASSWORD
-SECURITY --> RBAC
-SECURITY --> SESSION
-SECURITY --> TWOFA
-
-CRYPTO --> HASH["HashUtils"]
-CRYPTO --> HMAC["HmacUtils"]
-CRYPTO --> JWT["JwtTokenProvider"]
-
-FILTER --> AF["AuthenticationFilter"]
-FILTER --> AZ["AuthorizationFilter"]
-FILTER --> CORS["CorsFilter"]
-FILTER --> RATE["RateLimitingFilter"]
-FILTER --> HEADERS["SecurityHeadersFilter"]
-
-RBAC --> RBACM["RBACManager"]
-
-SESSION --> SM["SessionManager"]
-
-TWOFA --> BCM["BackupCodeManager"]
-TWOFA --> TOTP["TOTPProvider"]
-TWOFA --> TFAS["TwoFactorAuthService"]
-TWOFA --> TFR["TwoFactorResponse"]
+    SECURITY["Security"]
+    
+    AUTHN["Authentication"]
+    AUTHZ["Authorization"]
+    CRYPTO["Cryptography"]
+    FILTER["Security Filters"]
+    PASSWORD["Password Management"]
+    RBAC["RBAC"]
+    SESSION["Session Management"]
+    TWOFA["Two-Factor Authentication"]
+    
+    SECURITY --> AUTHN
+    SECURITY --> AUTHZ
+    SECURITY --> CRYPTO
+    SECURITY --> FILTER
+    SECURITY --> PASSWORD
+    SECURITY --> RBAC
+    SECURITY --> SESSION
+    SECURITY --> TWOFA
+    
+    CRYPTO --> HASH["HashUtils"]
+    CRYPTO --> HMAC["HmacUtils"]
+    CRYPTO --> JWT_CRYPTO["JwtTokenProvider"]
+    
+    FILTER --> AF["AuthenticationFilter"]
+    FILTER --> AZ["AuthorizationFilter"]
+    FILTER --> CORS["CorsFilter"]
+    FILTER --> RATE["RateLimitingFilter"]
+    FILTER --> HEADERS["SecurityHeadersFilter"]
+    
+    RBAC --> RBACM["RBACManager"]
+    
+    SESSION --> SM["SessionManager"]
+    
+    TWOFA --> BCM["BackupCodeManager"]
+    TWOFA --> TOTP_P["TOTPProvider"]
+    TWOFA --> TFAS["TwoFactorAuthService"]
+    TWOFA --> TFR["TwoFactorResponse"]
 ```
 
 ---
@@ -898,64 +869,73 @@ password_reset_token
 
 ```mermaid
 erDiagram
-
-USERS ||--o{ USER_ROLES : has
-ROLES ||--o{ USER_ROLES : assigned
-ROLES ||--o{ ROLE_PERMISSIONS : contains
-PERMISSIONS ||--o{ ROLE_PERMISSIONS : grants
-
-USERS ||--o{ ACCESS_REQUEST : creates
-ACCESS_REQUEST ||--o{ APPROVAL : has
-
-USERS ||--o{ AUDIT_LOG : generates
-
-USERS {
-bigint id
-string username
-string email
-string password
-boolean is_2fa_enabled
-string two_factor_secret
-string status
-datetime created_at
-}
-
-ROLES {
-bigint id
-string role_name
-string status
-}
-
-PERMISSIONS {
-bigint id
-string permission_name
-string resource
-string action
-}
-
-ACCESS_REQUEST {
-bigint id
-bigint user_id
-string status
-datetime created_at
-}
-
-APPROVAL {
-bigint id
-bigint access_request_id
-bigint approver_id
-string status
-datetime created_at
-}
-
-AUDIT_LOG {
-bigint id
-bigint user_id
-string action
-string resource
-string details
-datetime created_at
-}
+    USERS ||--o{ USER_ROLES : has
+    ROLES ||--o{ USER_ROLES : assigned
+    ROLES ||--o{ ROLE_PERMISSIONS : contains
+    PERMISSIONS ||--o{ ROLE_PERMISSIONS : grants
+    
+    USERS ||--o{ ACCESS_REQUEST : creates
+    ACCESS_REQUEST ||--o{ APPROVAL : has
+    
+    USERS ||--o{ AUDIT_LOG : generates
+    
+    USERS {
+        bigint id PK
+        string username
+        string email
+        string password
+        boolean is_2fa_enabled
+        string two_factor_secret
+        string status
+        datetime created_at
+    }
+    
+    ROLES {
+        bigint id PK
+        string role_name
+        string status
+    }
+    
+    PERMISSIONS {
+        bigint id PK
+        string permission_name
+        string resource
+        string action
+    }
+    
+    USER_ROLES {
+        bigint user_id FK
+        bigint role_id FK
+    }
+    
+    ROLE_PERMISSIONS {
+        bigint role_id FK
+        bigint permission_id FK
+    }
+    
+    ACCESS_REQUEST {
+        bigint id PK
+        bigint user_id FK
+        string status
+        datetime created_at
+    }
+    
+    APPROVAL {
+        bigint id PK
+        bigint access_request_id FK
+        bigint approver_id FK
+        string status
+        datetime created_at
+    }
+    
+    AUDIT_LOG {
+        bigint id PK
+        bigint user_id FK
+        string action
+        string resource
+        string details
+        datetime created_at
+    }
 ```
 
 ---
@@ -989,39 +969,38 @@ The versioned migration structure provides controlled database-schema evolution.
 
 ```mermaid
 flowchart LR
-
-HOSPITAL[" Hospital System"]
-
-DOCTOR["‍️ Doctor"]
-NURSE["‍️ Nurse"]
-RECEPTION["‍ Receptionist"]
-ADMIN[" Admin"]
-
-PATIENT["Patient Records"]
-PRESCRIPTION["Prescription"]
-APPOINTMENT["Appointments"]
-ACCESS["System Access"]
-
-HOSPITAL --> DOCTOR
-HOSPITAL --> NURSE
-HOSPITAL --> RECEPTION
-HOSPITAL --> ADMIN
-
-DOCTOR --> PATIENT
-DOCTOR --> PRESCRIPTION
-
-NURSE --> PATIENT
-
-RECEPTION --> APPOINTMENT
-
-ADMIN --> ACCESS
+    HOSPITAL["Hospital System"]
+    
+    DOCTOR["Doctor"]
+    NURSE["Nurse"]
+    RECEPTION["Receptionist"]
+    ADMIN["Admin"]
+    
+    PATIENT["Patient Records"]
+    PRESCRIPTION["Prescription"]
+    APPOINTMENT["Appointments"]
+    ACCESS["System Access"]
+    
+    HOSPITAL --> DOCTOR
+    HOSPITAL --> NURSE
+    HOSPITAL --> RECEPTION
+    HOSPITAL --> ADMIN
+    
+    DOCTOR --> PATIENT
+    DOCTOR --> PRESCRIPTION
+    
+    NURSE --> PATIENT
+    
+    RECEPTION --> APPOINTMENT
+    
+    ADMIN --> ACCESS
 ```
 
 AMS can act as an authorization layer where different healthcare staff members require different access levels.
 
 ---
 
-# 🏢 Enterprise Employee Access Management
+## 🏢 Enterprise Employee Access Management
 
 Organizations can manage:
 
@@ -1033,75 +1012,72 @@ Organizations can manage:
 
 ```mermaid
 flowchart LR
-
-ORG[" Organization"]
-
-EMP["Employees"]
-DEPT["Departments"]
-APPS["Internal Applications"]
-POLICIES["Security Policies"]
-PERMISSIONS["Permissions"]
-
-ORG --> EMP
-ORG --> DEPT
-ORG --> APPS
-ORG --> POLICIES
-
-POLICIES --> PERMISSIONS
-PERMISSIONS --> APPS
+    ORG["Organization"]
+    
+    EMP["Employees"]
+    DEPT["Departments"]
+    APPS["Internal Applications"]
+    POLICIES["Security Policies"]
+    PERMISSIONS_ORG["Permissions"]
+    
+    ORG --> EMP
+    ORG --> DEPT
+    ORG --> APPS
+    ORG --> POLICIES
+    
+    POLICIES --> PERMISSIONS_ORG
+    PERMISSIONS_ORG --> APPS
 ```
 
 ---
 
-# 💻 Application Authorization Service
+## 💻 Application Authorization Service
 
 AMS can operate as an authorization layer for existing applications.
 
 ```mermaid
 flowchart LR
-
-CLIENT["Client Application"]
-APP["Application Layer"]
-AMS[" AMS Authorization Layer"]
-RESOURCE["Protected Resource"]
-
-CLIENT --> APP
-APP --> AMS
-AMS --> RESOURCE
+    CLIENT["Client Application"]
+    APP["Application Layer"]
+    AMS["AMS Authorization Layer"]
+    RESOURCE["Protected Resource"]
+    
+    CLIENT --> APP
+    APP --> AMS
+    AMS --> RESOURCE
 ```
 
 ---
 
-# ☁️ SaaS Authorization Platform
+## ☁️ SaaS Authorization Platform
 
 AMS can be extended into a multi-tenant authorization platform.
 
 ```mermaid
 flowchart TB
-
-AMS["️ AMS Platform"]
-
-COMPANY_A["Company A"]
-COMPANY_B["Company B"]
-
-A_USERS["Users"]
-A_ROLES["Roles"]
-A_PERMISSIONS["Permissions"]
-
-B_USERS["Users"]
-B_ROLES["Roles"]
-B_PERMISSIONS["Permissions"]
-
-AMS --> COMPANY_A
-AMS --> COMPANY_B
-
-COMPANY_A --> A_USERS
-COMPANY_A --> A_ROLES
-COMPANY_A --> A_PERMISSIONS
-
-COMPANY_B --> B_USERS
-COMPANY_B --> B_ROLES
-COMPANY_B --> B_PERMISSIONS
+    AMS["AMS Platform"]
+    
+    COMPANY_A["Company A"]
+    COMPANY_B["Company B"]
+    
+    A_USERS["Users"]
+    A_ROLES["Roles"]
+    A_PERMISSIONS["Permissions"]
+    
+    B_USERS["Users"]
+    B_ROLES["Roles"]
+    B_PERMISSIONS["Permissions"]
+    
+    AMS --> COMPANY_A
+    AMS --> COMPANY_B
+    
+    COMPANY_A --> A_USERS
+    COMPANY_A --> A_ROLES
+    COMPANY_A --> A_PERMISSIONS
+    
+    COMPANY_B --> B_USERS
+    COMPANY_B --> B_ROLES
+    COMPANY_B --> B_PERMISSIONS
 ```
 
 ---
@@ -1236,28 +1212,27 @@ The project follows:
 
 ```mermaid
 flowchart LR
-
-PRINCIPLES["Design Principles"]
-
-SOLID["SOLID"]
-CLEAN["Clean Code"]
-SOC["Separation of Concerns"]
-REPOSITORY["Repository Pattern"]
-DTO["DTO Pattern"]
-MAPPER["Mapper Pattern"]
-LAYERED["Layered Architecture"]
-FEATURE["Feature-Based Architecture"]
-RBAC["RBAC"]
-
-PRINCIPLES --> SOLID
-PRINCIPLES --> CLEAN
-PRINCIPLES --> SOC
-PRINCIPLES --> REPOSITORY
-PRINCIPLES --> DTO
-PRINCIPLES --> MAPPER
-PRINCIPLES --> LAYERED
-PRINCIPLES --> FEATURE
-PRINCIPLES --> RBAC
+    PRINCIPLES["Design Principles"]
+    
+    SOLID["SOLID"]
+    CLEAN["Clean Code"]
+    SOC["Separation of Concerns"]
+    REPOSITORY["Repository Pattern"]
+    DTO["DTO Pattern"]
+    MAPPER["Mapper Pattern"]
+    LAYERED["Layered Architecture"]
+    FEATURE["Feature-Based Architecture"]
+    RBAC["RBAC"]
+    
+    PRINCIPLES --> SOLID
+    PRINCIPLES --> CLEAN
+    PRINCIPLES --> SOC
+    PRINCIPLES --> REPOSITORY
+    PRINCIPLES --> DTO
+    PRINCIPLES --> MAPPER
+    PRINCIPLES --> LAYERED
+    PRINCIPLES --> FEATURE
+    PRINCIPLES --> RBAC
 ```
 
 ---
@@ -1286,28 +1261,27 @@ Future improvements include:
 
 ```mermaid
 flowchart LR
-
-CLIENT["Client Applications"]
-GATEWAY["API Gateway"]
-
-IAM["Identity / Authorization Service"]
-USER["User Service"]
-PERMISSION["Permission Service"]
-AUDIT["Audit Service"]
-
-DB[("Database")]
-
-CLIENT --> GATEWAY
-
-GATEWAY --> IAM
-GATEWAY --> USER
-GATEWAY --> PERMISSION
-GATEWAY --> AUDIT
-
-IAM --> DB
-USER --> DB
-PERMISSION --> DB
-AUDIT --> DB
+    CLIENT["Client Applications"]
+    GATEWAY["API Gateway"]
+    
+    IAM["Identity & Authorization Service"]
+    USER["User Service"]
+    PERMISSION["Permission Service"]
+    AUDIT["Audit Service"]
+    
+    DB[("Database")]
+    
+    CLIENT --> GATEWAY
+    
+    GATEWAY --> IAM
+    GATEWAY --> USER
+    GATEWAY --> PERMISSION
+    GATEWAY --> AUDIT
+    
+    IAM --> DB
+    USER --> DB
+    PERMISSION --> DB
+    AUDIT --> DB
 ```
 
 ---
@@ -1315,20 +1289,40 @@ AUDIT --> DB
 # 🎯 System Design Goals
 
 ```mermaid
-mindmap
-root((AMS))
-Secure Identity Management
-Strong Authentication
-Multi-Factor Authentication
-Fine-Grained Authorization
-Role-Based Access Control
-Security Auditing
-Controlled Access Workflows
-Modular Development
-Maintainability
-Enterprise Scalability
-Reusable Authorization
-Future Microservice Migration
+graph TD
+    AMS["AMS Platform"]
+    
+    SIM["Secure Identity Management"]
+    SA["Strong Authentication"]
+    MFA["Multi-Factor Authentication"]
+    FGA["Fine-Grained Authorization"]
+    RBAC_GOAL["Role-Based Access Control"]
+    
+    SAud["Security Auditing"]
+    CAW["Controlled Access Workflows"]
+    
+    MD["Modular Development"]
+    Maint["Maintainability"]
+    ES["Enterprise Scalability"]
+    
+    RA["Reusable Authorization"]
+    FMM["Future Microservice Migration"]
+    
+    AMS --> SIM
+    SIM --> SA
+    SA --> MFA
+    SIM --> FGA
+    FGA --> RBAC_GOAL
+    
+    AMS --> SAud
+    SAud --> CAW
+    
+    AMS --> MD
+    MD --> Maint
+    MD --> ES
+    
+    AMS --> RA
+    RA --> FMM
 ```
 
 ---
@@ -1337,25 +1331,24 @@ Future Microservice Migration
 
 ```mermaid
 flowchart TD
-
-REQUEST["Incoming Request"]
-
-AUTHENTICATION[" Authentication"]
-ROLE[" Role Validation"]
-PERMISSION[" Permission Validation"]
-
-DECISION{"Access Allowed?"}
-
-ALLOW[" Allow Access"]
-DENY[" Deny Access"]
-
-REQUEST --> AUTHENTICATION
-AUTHENTICATION --> ROLE
-ROLE --> PERMISSION
-PERMISSION --> DECISION
-
-DECISION -->|Yes| ALLOW
-DECISION -->|No| DENY
+    REQUEST["Incoming Request"]
+    
+    AUTHENTICATION["Authentication"]
+    ROLE["Role Validation"]
+    PERMISSION["Permission Validation"]
+    
+    DECISION{"Access Allowed?"}
+    
+    ALLOW["Allow Access"]
+    DENY["Deny Access"]
+    
+    REQUEST --> AUTHENTICATION
+    AUTHENTICATION --> ROLE
+    ROLE --> PERMISSION
+    PERMISSION --> DECISION
+    
+    DECISION -->|Yes| ALLOW
+    DECISION -->|No| DENY
 ```
 
 ---
@@ -1381,59 +1374,58 @@ DECISION -->|No| DENY
 
 ```mermaid
 flowchart TB
-
-CLIENT[" Client"]
-
-AUTHENTICATION[" Authentication"]
-TWOFA[" 2FA"]
-SESSION[" Session"]
-JWT["️ JWT"]
-
-AUTHORIZATION["️ Authorization"]
-RBAC[" RBAC"]
-PERMISSION[" Permissions"]
-
-GOVERNANCE[" Access Governance"]
-REQUEST[" Access Request"]
-APPROVAL[" Approval"]
-
-AUDITING[" Auditing & Reporting"]
-AUDIT["Audit"]
-REPORT["Reports"]
-
-DATABASE[(" MySQL")]
-
-CLIENT --> AUTHENTICATION
-
-AUTHENTICATION --> TWOFA
-AUTHENTICATION --> SESSION
-AUTHENTICATION --> JWT
-
-SESSION --> AUTHORIZATION
-JWT --> AUTHORIZATION
-
-AUTHORIZATION --> RBAC
-RBAC --> PERMISSION
-
-PERMISSION --> GOVERNANCE
-GOVERNANCE --> REQUEST
-REQUEST --> APPROVAL
-
-APPROVAL --> AUDITING
-AUDITING --> AUDIT
-AUDITING --> REPORT
-
-AUTHENTICATION --> DATABASE
-AUTHORIZATION --> DATABASE
-GOVERNANCE --> DATABASE
-AUDITING --> DATABASE
+    CLIENT["Client"]
+    
+    AUTHENTICATION["Authentication"]
+    TWOFA["2FA"]
+    SESSION["Session"]
+    JWT["JWT"]
+    
+    AUTHORIZATION["Authorization"]
+    RBAC["RBAC"]
+    PERMISSION["Permissions"]
+    
+    GOVERNANCE["Access Governance"]
+    REQUEST["Access Request"]
+    APPROVAL["Approval"]
+    
+    AUDITING["Auditing & Reporting"]
+    AUDIT["Audit"]
+    REPORT["Reports"]
+    
+    DATABASE[("MySQL")]
+    
+    CLIENT --> AUTHENTICATION
+    
+    AUTHENTICATION --> TWOFA
+    AUTHENTICATION --> SESSION
+    AUTHENTICATION --> JWT
+    
+    SESSION --> AUTHORIZATION
+    JWT --> AUTHORIZATION
+    
+    AUTHORIZATION --> RBAC
+    RBAC --> PERMISSION
+    
+    PERMISSION --> GOVERNANCE
+    GOVERNANCE --> REQUEST
+    REQUEST --> APPROVAL
+    
+    APPROVAL --> AUDITING
+    AUDITING --> AUDIT
+    AUDITING --> REPORT
+    
+    AUTHENTICATION --> DATABASE
+    AUTHORIZATION --> DATABASE
+    GOVERNANCE --> DATABASE
+    AUDITING --> DATABASE
 ```
 
 ---
 
 # 👨‍💻 Author
 
-**MD Abdullah Rajeb**
+**Md. Abdullah**
 
 Backend Software Engineer
 
@@ -1446,8 +1438,14 @@ Backend Software Engineer
 - Software Architecture
 - Database Design
 
+### Contact
+
+**GitHub:** [github.com/MotionPrograming](https://github.com/MotionPrograming)
+
 ---
 
 # 📄 License
 
 This project is developed for **educational purposes and software engineering practice**.
+
+---
