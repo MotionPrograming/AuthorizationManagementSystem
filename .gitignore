@@ -18,3 +18,5 @@ Servers/
 
 # OS
 .DS_Store
+# Local generated files
+project_all_code.txt
