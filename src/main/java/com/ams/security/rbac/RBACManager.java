@@ -15,9 +15,7 @@ public class RBACManager {
 		Set<String> roles = new HashSet<>();
 		String sql = "SELECT r.ROLE_NAME FROM ROLES r " + "JOIN USER_ROLES ur ON r.ROLE_ID = ur.ROLE_ID "
 				+ "WHERE ur.USER_ID = ?";
-
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
 			pstmt.setLong(1, userId);
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
@@ -35,9 +33,7 @@ public class RBACManager {
 		String sql = "SELECT p.PERMISSION_NAME FROM PERMISSIONS p "
 				+ "JOIN ROLE_PERMISSIONS rp ON p.PERMISSION_ID = rp.PERMISSION_ID "
 				+ "JOIN USER_ROLES ur ON rp.ROLE_ID = ur.ROLE_ID " + "WHERE ur.USER_ID = ?";
-
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
 			pstmt.setLong(1, userId);
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
@@ -51,11 +47,17 @@ public class RBACManager {
 	}
 
 	public boolean hasRole(Long userId, String roleName) {
+		if (roleName == null || roleName.isBlank()) {
+			return false;
+		}
 		Set<String> roles = getUserRoles(userId);
 		return roles.contains(roleName);
 	}
 
 	public boolean hasPermission(Long userId, String permissionName) {
+		if (permissionName == null || permissionName.isBlank()) {
+			return false;
+		}
 		Set<String> permissions = getUserPermissions(userId);
 		return permissions.contains(permissionName);
 	}

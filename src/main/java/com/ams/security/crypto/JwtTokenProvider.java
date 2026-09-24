@@ -2,7 +2,6 @@ package com.ams.security.crypto;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import com.ams.config.ApplicationConfig;
 
 public class JwtTokenProvider {
 
@@ -12,12 +11,10 @@ public class JwtTokenProvider {
 
 	private static String loadSecret() {
 		String env = System.getenv("AMS_JWT_SECRET");
-		if (env != null && env.length() >= 32) return env;
-		try {
-			String configured = ApplicationConfig.getProperty("security.jwt.secret");
-			if (configured.length() >= 32) return configured;
-		} catch (RuntimeException ignored) { }
-		return "CHANGE_ME_AMS_JWT_SECRET_AT_LEAST_32_BYTES_LONG";
+		if (env == null || env.length() < 32) {
+			throw new RuntimeException("AMS_JWT_SECRET environment variable not set or too short (min 32 bytes)");
+		}
+		return env;
 	}
 
 	/**
