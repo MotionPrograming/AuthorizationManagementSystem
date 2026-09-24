@@ -2,7 +2,7 @@
 
 > **Enterprise-oriented Identity, Authentication & Authorization Platform**
 >
-> A modular Java-based Authorization Management System built with **Java Servlet, JSP, JDBC, and MySQL**, providing authentication, JWT, session security, TOTP-based 2FA, RBAC, fine-grained permissions, access-request workflows, approval management, audit logging, and reporting.
+> A modular Java-based Authorization Management System built with **Java Servlet, JSP, JDBC, and Oracle Database**, providing authentication, JWT, session security, TOTP-based 2FA, RBAC, fine-grained permissions, access-request workflows, approval management, audit logging, and reporting.
 
 ---
 
@@ -12,24 +12,24 @@
 
 It brings together:
 
-- 🔑 Authentication
-- 🎟️ JWT-based authentication
-- 🛡️ Authorization
-- 👥 Role-Based Access Control (RBAC)
-- 🔐 Two-Factor Authentication (2FA)
-- 📱 TOTP verification
-- 🔑 Backup-code recovery
-- 👤 User management
-- 🧩 Fine-grained permission management
-- 📩 Access-request workflows
-- ✅ Approval workflows
-- 📋 Security auditing
-- 📊 Reporting
-- 🔒 Session management
-- 🚦 Rate limiting
-- 🌐 CORS protection
-- 🛡️ Security headers
-- 🔏 Cryptographic utilities
+* 🔑 Authentication
+* 🎟️ JWT-based authentication
+* 🛡️ Authorization
+* 👥 Role-Based Access Control (RBAC)
+* 🔐 Two-Factor Authentication (2FA)
+* 📱 TOTP verification
+* 🔑 Backup-code recovery
+* 👤 User management
+* 🧩 Fine-grained permission management
+* 📩 Access-request workflows
+* ✅ Approval workflows
+* 📋 Security auditing
+* 📊 Reporting
+* 🔒 Session management
+* 🚦 Rate limiting
+* 🌐 CORS protection
+* 🛡️ Security headers
+* 🔏 Cryptographic utilities
 
 The platform can be integrated with healthcare systems, ERP applications, SaaS platforms, enterprise applications, and internal management systems.
 
@@ -70,22 +70,22 @@ flowchart TB
 
 ## 🔑 Authentication & Security
 
-- Secure user authentication
-- BCrypt password hashing
-- Session-based authentication
-- JWT authentication
-- Authentication filter
-- Authorization filter
-- Password management
-- Role-Based Access Control
-- TOTP-based 2FA
-- Backup-code recovery
-- CORS protection
-- Rate limiting
-- Security headers
-- SHA-256 hashing
-- HMAC-SHA256 integrity protection
-- Secure session management
+* Secure user authentication
+* BCrypt password hashing
+* Session-based authentication
+* JWT authentication
+* Authentication filter
+* Authorization filter
+* Password management
+* Role-Based Access Control
+* TOTP-based 2FA
+* Backup-code recovery
+* CORS protection
+* Rate limiting
+* Security headers
+* SHA-256 hashing
+* HMAC-SHA256 integrity protection
+* Secure session management
 
 ---
 
@@ -171,17 +171,17 @@ AMS implements **TOTP-based Two-Factor Authentication**.
 
 Compatible authenticator applications include:
 
-- Google Authenticator
-- Authy
-- Other TOTP-compatible applications
+* Google Authenticator
+* Authy
+* Other TOTP-compatible applications
 
 ## 2FA Endpoints
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/v1/auth/2fa/setup` | Generate TOTP secret and QR code |
-| POST | `/api/v1/auth/2fa/enable` | Verify OTP and enable 2FA |
-| POST | `/api/v1/auth/2fa/verify` | Verify OTP during authentication |
+| Method | Endpoint                  | Purpose                          |
+| ------ | ------------------------- | -------------------------------- |
+| POST   | `/api/v1/auth/2fa/setup`  | Generate TOTP secret and QR code |
+| POST   | `/api/v1/auth/2fa/enable` | Verify OTP and enable 2FA        |
+| POST   | `/api/v1/auth/2fa/verify` | Verify OTP during authentication |
 
 ## 2FA Architecture
 
@@ -237,14 +237,14 @@ TWO_FACTOR_SECRET
 
 # 🔒 Cryptography & Data Integrity
 
-AMS includes cryptographic utilities for authentication, integrity protection, and secure token operations.
+AMS includes cryptographic utilities for authentication, integrity, and secure token operations.
 
-| Mechanism | Purpose |
-|---|---|
-| BCrypt | Password hashing |
-| SHA-256 | Cryptographic hashing / fingerprinting |
-| HMAC-SHA256 | Integrity and authenticity protection |
-| JWT signing | Token authentication |
+| Mechanism   | Purpose                                |
+| ----------- | -------------------------------------- |
+| BCrypt      | Password hashing                       |
+| SHA-256     | Cryptographic hashing / fingerprinting |
+| HMAC-SHA256 | Integrity and authenticity protection  |
+| JWT signing | Token authentication                   |
 
 ```mermaid
 flowchart LR
@@ -369,12 +369,12 @@ AMS supports fine-grained permissions.
 
 ### Capabilities
 
-- Create permissions
-- Update permissions
-- Delete permissions
-- Assign permissions to roles
-- Validate permissions
-- Control resource-level access
+* Create permissions
+* Update permissions
+* Delete permissions
+* Assign permissions to roles
+* Validate permissions
+* Control resource-level access
 
 ```mermaid
 flowchart LR
@@ -413,11 +413,11 @@ AMS provides controlled access-request workflows.
 
 ### Features
 
-- Submit access requests
-- Track request status
-- Request additional permissions
-- Temporary access management
-- Approval-based access provisioning
+* Submit access requests
+* Track request status
+* Request additional permissions
+* Temporary access management
+* Approval-based access provisioning
 
 ```mermaid
 flowchart LR
@@ -441,11 +441,11 @@ AMS supports approval-based access management.
 
 ### Features
 
-- Approve requests
-- Reject requests
-- Approval history
-- Multi-level approval support
-- Controlled access provisioning
+* Approve requests
+* Reject requests
+* Approval history
+* Multi-level approval support
+* Controlled access provisioning
 
 ```mermaid
 stateDiagram-v2
@@ -472,15 +472,15 @@ AMS tracks security-sensitive activities for accountability.
 
 ### Audited Activities
 
-- Login activities
-- Permission changes
-- Role changes
-- Access requests
-- Approval actions
-- 2FA setup
-- 2FA enablement
-- 2FA verification
-- Other security-related operations
+* Login activities
+* Permission changes
+* Role changes
+* Access requests
+* Approval actions
+* 2FA setup
+* 2FA enablement
+* 2FA verification
+* Other security-related operations
 
 ```mermaid
 flowchart LR
@@ -588,7 +588,7 @@ flowchart TB
     
     REPOSITORY["Repository Layer"]
     
-    DATABASE[("MySQL Database")]
+    DATABASE[("Oracle Database")]
     
     CLIENT <--> UI
     UI --> SECURITY
@@ -623,7 +623,7 @@ sequenceDiagram
     participant C as Controller
     participant S as Service
     participant R as Repository
-    participant DB as MySQL
+    participant DB as Oracle Database
     
     U->>AF: HTTP Request
     
@@ -658,14 +658,14 @@ AMS provides centralized user management.
 
 ### Capabilities
 
-- Create users
-- Update users
-- Delete users
-- Activate / deactivate users
-- Assign roles
-- Manage user access
-- Enable / disable 2FA
-- Manage authentication credentials
+* Create users
+* Update users
+* Delete users
+* Activate / deactivate users
+* Assign roles
+* Manage user access
+* Enable / disable 2FA
+* Manage authentication credentials
 
 ```mermaid
 flowchart LR
@@ -736,11 +736,11 @@ Module
 
 This structure supports:
 
-- Separation of Concerns
-- Maintainability
-- Testability
-- Module-level organization
-- Code reusability
+* Separation of Concerns
+* Maintainability
+* Testability
+* Module-level organization
+* Code reusability
 
 ---
 
@@ -807,7 +807,6 @@ com.ams
 │       └── PhoneValidator
 │
 ├── config
-│
 ├── migration
 │
 ├── modules
@@ -849,20 +848,20 @@ com.ams
 
 # 🗄️ Database Architecture
 
-The primary database is **MySQL**.
+The primary database is **Oracle Database**.
 
 ## Main Tables
 
 ```text
-users
-roles
-permissions
-user_roles
-role_permissions
-access_request
-approval
-audit_log
-password_reset_token
+USERS
+ROLES
+PERMISSIONS
+USER_ROLES
+ROLE_PERMISSIONS
+ACCESS_REQUEST
+APPROVAL
+AUDIT_LOG
+PASSWORD_RESET_TOKEN
 ```
 
 ## Entity Relationship Diagram
@@ -880,61 +879,61 @@ erDiagram
     USERS ||--o{ AUDIT_LOG : generates
     
     USERS {
-        bigint id PK
-        string username
-        string email
-        string password
-        boolean is_2fa_enabled
-        string two_factor_secret
-        string status
-        datetime created_at
+        number id PK
+        varchar2 username
+        varchar2 email
+        varchar2 password
+        number is_2fa_enabled
+        varchar2 two_factor_secret
+        varchar2 status
+        timestamp created_at
     }
     
     ROLES {
-        bigint id PK
-        string role_name
-        string status
+        number id PK
+        varchar2 role_name
+        varchar2 status
     }
     
     PERMISSIONS {
-        bigint id PK
-        string permission_name
-        string resource
-        string action
+        number id PK
+        varchar2 permission_name
+        varchar2 resource
+        varchar2 action
     }
     
     USER_ROLES {
-        bigint user_id FK
-        bigint role_id FK
+        number user_id FK
+        number role_id FK
     }
     
     ROLE_PERMISSIONS {
-        bigint role_id FK
-        bigint permission_id FK
+        number role_id FK
+        number permission_id FK
     }
     
     ACCESS_REQUEST {
-        bigint id PK
-        bigint user_id FK
-        string status
-        datetime created_at
+        number id PK
+        number user_id FK
+        varchar2 status
+        timestamp created_at
     }
     
     APPROVAL {
-        bigint id PK
-        bigint access_request_id FK
-        bigint approver_id FK
-        string status
-        datetime created_at
+        number id PK
+        number access_request_id FK
+        number approver_id FK
+        varchar2 status
+        timestamp created_at
     }
     
     AUDIT_LOG {
-        bigint id PK
-        bigint user_id FK
-        string action
-        string resource
-        string details
-        datetime created_at
+        number id PK
+        number user_id FK
+        varchar2 action
+        varchar2 resource
+        varchar2 details
+        timestamp created_at
     }
 ```
 
@@ -959,7 +958,7 @@ db.migration
 └── V10__...
 ```
 
-The versioned migration structure provides controlled database-schema evolution.
+The versioned migration structure provides controlled database-schema evolution for Oracle Database.
 
 ---
 
@@ -1004,11 +1003,11 @@ AMS can act as an authorization layer where different healthcare staff members r
 
 Organizations can manage:
 
-- Employee accounts
-- Department access
-- Internal applications
-- Security policies
-- Application permissions
+* Employee accounts
+* Department access
+* Internal applications
+* Security policies
+* Application permissions
 
 ```mermaid
 flowchart LR
@@ -1086,42 +1085,43 @@ flowchart TB
 
 ## Backend
 
-- Java
-- Servlet API
-- JSP
-- JDBC
+* Java
+* Servlet API
+* JSP
+* JDBC
 
 ## Database
 
-- MySQL
+* Oracle Database
+* Oracle JDBC Driver
 
 ## Frontend
 
-- HTML
-- CSS
-- JavaScript
-- Bootstrap
+* HTML
+* CSS
+* JavaScript
+* Bootstrap
 
 ## Security
 
-- BCrypt
-- Session Authentication
-- JWT
-- RBAC
-- TOTP / 2FA
-- Backup Codes
-- SHA-256
-- HMAC-SHA256
-- CORS Protection
-- Rate Limiting
-- Security Headers
+* BCrypt
+* Session Authentication
+* JWT
+* RBAC
+* TOTP / 2FA
+* Backup Codes
+* SHA-256
+* HMAC-SHA256
+* CORS Protection
+* Rate Limiting
+* Security Headers
 
 ## Tools
 
-- Eclipse IDE
-- Apache Tomcat
-- Git
-- Maven
+* Eclipse IDE
+* Apache Tomcat
+* Git
+* Maven
 
 ---
 
@@ -1134,13 +1134,23 @@ git clone https://github.com/MotionPrograming/AuthorizationManagementSystem.git
 cd AuthorizationManagementSystem
 ```
 
-## 2. Create MySQL Database
+## 2. Configure Oracle Database
+
+Install and configure an Oracle Database instance.
+
+Create a dedicated Oracle user/schema for AMS.
+
+For example:
 
 ```sql
-CREATE DATABASE authorization_management;
+CREATE USER ams_user IDENTIFIED BY password;
+
+GRANT CONNECT, RESOURCE TO ams_user;
 ```
 
-## 3. Configure Database
+> The exact privileges should be adjusted according to the Oracle environment and deployment requirements.
+
+## 3. Configure Database Connection
 
 Configure:
 
@@ -1151,14 +1161,30 @@ resources/db.properties
 Example:
 
 ```properties
-db.url=jdbc:mysql://localhost:3306/authorization_management
-db.username=root
+db.url=jdbc:oracle:thin:@localhost:1521/XEPDB1
+db.username=ams_user
 db.password=password
 ```
 
-> ⚠️ For production deployments, database credentials should be supplied through secure environment-specific configuration rather than committed to source control.
+The connection URL may vary depending on the Oracle installation and service name.
 
-## 4. Run Database Migration
+## 4. Configure Oracle JDBC Driver
+
+The project requires the Oracle JDBC driver.
+
+Example Maven dependency:
+
+```xml
+<dependency>
+    <groupId>com.oracle.database.jdbc</groupId>
+    <artifactId>ojdbc11</artifactId>
+    <version>23.8.0.25.04</version>
+</dependency>
+```
+
+Use the JDBC driver version compatible with the Java version and Oracle environment used by the project.
+
+## 5. Run Database Migration
 
 Execute:
 
@@ -1166,20 +1192,21 @@ Execute:
 MigrationRunner.java
 ```
 
-The versioned migration scripts will create and update the required database schema.
+The versioned migration scripts will create and update the required Oracle database schema.
 
-## 5. Configure Application
+## 6. Configure Application
 
 Verify:
 
-- MySQL connection
-- Application configuration
-- JWT configuration
-- Security configuration
-- Session configuration
-- 2FA configuration
+* Oracle database connection
+* Oracle JDBC driver
+* Application configuration
+* JWT configuration
+* Security configuration
+* Session configuration
+* 2FA configuration
 
-## 6. Deploy
+## 7. Deploy
 
 Deploy the application to:
 
@@ -1199,16 +1226,16 @@ http://localhost:8080/AuthorizationManagementSystem
 
 The project follows:
 
-- SOLID Principles
-- Clean Code Practices
-- Separation of Concerns
-- Single Responsibility Principle
-- Repository Pattern
-- DTO Pattern
-- Mapper Pattern
-- Layered Architecture
-- Feature-Based Architecture
-- RBAC Pattern
+* SOLID Principles
+* Clean Code Practices
+* Separation of Concerns
+* Single Responsibility Principle
+* Repository Pattern
+* DTO Pattern
+* Mapper Pattern
+* Layered Architecture
+* Feature-Based Architecture
+* RBAC Pattern
 
 ```mermaid
 flowchart LR
@@ -1241,19 +1268,19 @@ flowchart LR
 
 Future improvements include:
 
-- REST API support
-- OAuth 2.0 integration
-- OpenID Connect (OIDC)
-- Spring Boot migration
-- Microservices architecture
-- Redis session management
-- Email notification service
-- Multi-tenant SaaS architecture
-- Cloud deployment
-- API Gateway authorization
-- Centralized Identity Provider
-- Distributed audit processing
-- Policy-Based Access Control (PBAC)
+* REST API support
+* OAuth 2.0 integration
+* OpenID Connect (OIDC)
+* Spring Boot migration
+* Microservices architecture
+* Redis session management
+* Email notification service
+* Multi-tenant SaaS architecture
+* Cloud deployment
+* API Gateway authorization
+* Centralized Identity Provider
+* Distributed audit processing
+* Policy-Based Access Control (PBAC)
 
 ---
 
@@ -1269,7 +1296,7 @@ flowchart LR
     PERMISSION["Permission Service"]
     AUDIT["Audit Service"]
     
-    DB[("Database")]
+    DB[("Oracle Database")]
     
     CLIENT --> GATEWAY
     
@@ -1355,18 +1382,18 @@ flowchart TD
 
 # 🔐 Security Responsibility Map
 
-| Component | Responsibility |
-|---|---|
+| Component              | Responsibility                  |
+| ---------------------- | ------------------------------- |
 | `AuthenticationFilter` | Authenticate protected requests |
-| `AuthorizationFilter` | Validate authorization |
-| `RBACManager` | Manage RBAC decisions |
-| `SessionManager` | Manage application sessions |
-| `JwtTokenProvider` | JWT creation/validation |
-| `TOTPProvider` | TOTP operations |
-| `BackupCodeManager` | Backup-code management |
-| `TwoFactorAuthService` | 2FA orchestration |
-| `HashUtils` | Cryptographic hashing |
-| `HmacUtils` | HMAC integrity protection |
+| `AuthorizationFilter`  | Validate authorization          |
+| `RBACManager`          | Manage RBAC decisions           |
+| `SessionManager`       | Manage application sessions     |
+| `JwtTokenProvider`     | JWT creation/validation         |
+| `TOTPProvider`         | TOTP operations                 |
+| `BackupCodeManager`    | Backup-code management          |
+| `TwoFactorAuthService` | 2FA orchestration               |
+| `HashUtils`            | Cryptographic hashing           |
+| `HmacUtils`            | HMAC integrity protection       |
 
 ---
 
@@ -1393,7 +1420,7 @@ flowchart TB
     AUDIT["Audit"]
     REPORT["Reports"]
     
-    DATABASE[("MySQL")]
+    DATABASE[("Oracle Database")]
     
     CLIENT --> AUTHENTICATION
     
@@ -1431,12 +1458,12 @@ Backend Software Engineer
 
 ### Interests
 
-- Java
-- C#
-- ASP.NET Core
-- Microservices
-- Software Architecture
-- Database Design
+* Java
+* C#
+* ASP.NET Core
+* Microservices
+* Software Architecture
+* Database Design
 
 ### Contact
 
@@ -1447,5 +1474,3 @@ Backend Software Engineer
 # 📄 License
 
 This project is developed for **educational purposes and software engineering practice**.
-
----
