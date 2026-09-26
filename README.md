@@ -1,16 +1,16 @@
 # 🔐 Authorization Management System (AMS)
 
 > **Enterprise-oriented Identity, Authentication & Authorization Platform**
->
-> A modular Java-based Authorization Management System built with **Java Servlet, JSP, JDBC, and Oracle Database**, providing authentication, JWT, session security, TOTP-based 2FA, RBAC, fine-grained permissions, access-request workflows, approval management, audit logging, and reporting.
+
+A modular Java-based Authorization Management System built with **Java Servlet, JSP, JDBC, and Oracle Database**, providing authentication, JWT, session security, TOTP-based 2FA, RBAC, fine-grained permissions, access-request workflows, approval management, audit logging, reporting, and a structured JSP-based user and administrator frontend.
 
 ---
 
 ## 📌 Overview
 
-**Authorization Management System (AMS)** is designed as a reusable security and authorization platform for applications that need centralized identity and access management.
+**Authorization Management System (AMS)** is designed as a reusable security and authorization platform for applications that require centralized identity, authentication, authorization, access management, and security auditing.
 
-It brings together:
+The system brings together:
 
 * 🔑 Authentication
 * 🎟️ JWT-based authentication
@@ -30,6 +30,8 @@ It brings together:
 * 🌐 CORS protection
 * 🛡️ Security headers
 * 🔏 Cryptographic utilities
+* 🖥️ JSP-based user frontend
+* ⚙️ JSP-based administrator frontend
 
 The platform can be integrated with healthcare systems, ERP applications, SaaS platforms, enterprise applications, and internal management systems.
 
@@ -42,7 +44,7 @@ The goal of AMS is to provide a centralized platform for managing:
 ```mermaid
 flowchart TB
     AMS["Authorization Management System"]
-    
+
     USER["Users"]
     ROLE["Roles"]
     PERM["Permissions"]
@@ -52,7 +54,8 @@ flowchart TB
     APPROVAL["Approval Workflows"]
     AUDIT["Security Auditing"]
     REPORT["Reporting"]
-    
+    UI["JSP Web Interface"]
+
     AMS --> USER
     AMS --> ROLE
     AMS --> PERM
@@ -62,6 +65,7 @@ flowchart TB
     AMS --> APPROVAL
     AMS --> AUDIT
     AMS --> REPORT
+    AMS --> UI
 ```
 
 ---
@@ -89,6 +93,609 @@ flowchart TB
 
 ---
 
+## 👥 User Management
+
+Administrators can manage:
+
+* User accounts
+* User profiles
+* User status
+* User roles
+* User permissions
+* Authentication credentials
+* 2FA configuration
+* Access requests
+
+---
+
+## 🧩 Permission Management
+
+AMS supports fine-grained permission management.
+
+Capabilities include:
+
+* Create permissions
+* Update permissions
+* Delete permissions
+* Assign permissions to roles
+* Validate permissions
+* Control resource-level access
+
+A permission can conceptually represent:
+
+```text
+Resource + Action
+```
+
+Examples:
+
+```text
+USER + READ
+USER + UPDATE
+ROLE + CREATE
+REPORT + VIEW
+```
+
+---
+
+## 📩 Access Request Management
+
+AMS provides controlled access-request workflows.
+
+Features:
+
+* Submit access requests
+* Track request status
+* Request additional permissions
+* Temporary access management
+* Approval-based access provisioning
+
+```mermaid
+flowchart LR
+    EMPLOYEE["Employee"]
+    REQUEST["Access Request"]
+    MANAGER["Manager Review"]
+    ADMIN["Admin Approval"]
+    GRANT["Access Granted"]
+
+    EMPLOYEE --> REQUEST
+    REQUEST --> MANAGER
+    MANAGER --> ADMIN
+    ADMIN --> GRANT
+```
+
+---
+
+## ✅ Approval Workflow
+
+AMS supports approval-based access management.
+
+Features:
+
+* Approve requests
+* Reject requests
+* Approval history
+* Multi-level approval support
+* Controlled access provisioning
+
+```mermaid
+stateDiagram-v2
+    [*] --> Submitted
+
+    Submitted --> Pending
+
+    Pending --> Approved
+    Pending --> Rejected
+
+    Approved --> AccessGranted
+    Rejected --> Closed
+
+    AccessGranted --> Closed
+
+    Closed --> [*]
+```
+
+---
+
+# 🖥️ Frontend Architecture
+
+AMS provides a structured **JSP-based web frontend** divided into:
+
+1. **User Frontend**
+2. **Admin Frontend**
+3. **Shared Components**
+4. **Shared Layouts**
+
+The frontend follows a feature-oriented JSP organization so that user-facing and administrator-facing interfaces remain separated.
+
+```mermaid
+flowchart TB
+    APP["AMS Web Application"]
+
+    USER["User Frontend"]
+    ADMIN["Admin Frontend"]
+    COMMON["Common Pages"]
+    LAYOUT["Shared Layouts"]
+    ASSETS["Frontend Assets"]
+
+    APP --> USER
+    APP --> ADMIN
+    APP --> COMMON
+    APP --> LAYOUT
+    APP --> ASSETS
+```
+
+---
+
+## 👤 User Frontend
+
+The user frontend contains functionality available to authenticated application users.
+
+```text
+WEB-INF/views/user/
+│
+├── auth/
+│   ├── login.jsp
+│   ├── verify-2fa.jsp
+│   ├── forgot-password.jsp
+│   └── reset-password.jsp
+│
+├── dashboard.jsp
+│
+├── profile/
+│   ├── profile.jsp
+│   ├── security.jsp
+│   └── change-password.jsp
+│
+└── access-request/
+    ├── create.jsp
+    ├── my-requests.jsp
+    └── view.jsp
+```
+
+### User Frontend Responsibilities
+
+#### Authentication
+
+```text
+login.jsp
+verify-2fa.jsp
+forgot-password.jsp
+reset-password.jsp
+```
+
+Responsible for the user authentication and account-recovery interface.
+
+#### Dashboard
+
+```text
+dashboard.jsp
+```
+
+Provides the main authenticated-user interface.
+
+#### Profile & Security
+
+```text
+profile/profile.jsp
+profile/security.jsp
+profile/change-password.jsp
+```
+
+Provides:
+
+* Profile management
+* Security settings
+* Password management
+* Account security operations
+
+#### Access Requests
+
+```text
+access-request/create.jsp
+access-request/my-requests.jsp
+access-request/view.jsp
+```
+
+Provides:
+
+* Creating access requests
+* Viewing submitted requests
+* Tracking request status
+* Viewing individual request details
+
+---
+
+# ⚙️ Admin Frontend
+
+The administrator frontend provides management interfaces for users, roles, permissions, access requests, approvals, auditing, and reports.
+
+```text
+WEB-INF/views/admin/
+│
+├── dashboard.jsp
+│
+├── users/
+│   ├── list.jsp
+│   ├── create.jsp
+│   ├── edit.jsp
+│   └── view.jsp
+│
+├── roles/
+│   ├── list.jsp
+│   ├── create.jsp
+│   ├── edit.jsp
+│   └── permissions.jsp
+│
+├── permissions/
+│   ├── list.jsp
+│   ├── create.jsp
+│   ├── edit.jsp
+│   └── view.jsp
+│
+├── access-request/
+│   ├── list.jsp
+│   └── view.jsp
+│
+├── approval/
+│   ├── pending.jsp
+│   ├── view.jsp
+│   └── history.jsp
+│
+├── audit/
+│   ├── logs.jsp
+│   └── view.jsp
+│
+└── report/
+    ├── dashboard.jsp
+    ├── users.jsp
+    ├── roles.jsp
+    ├── permissions.jsp
+    └── audit.jsp
+```
+
+---
+
+## 👥 Admin User Management
+
+```text
+users/
+├── list.jsp
+├── create.jsp
+├── edit.jsp
+└── view.jsp
+```
+
+Provides interfaces for:
+
+* Listing users
+* Creating users
+* Editing users
+* Viewing user details
+* Managing user accounts
+
+---
+
+## 👥 Admin Role Management
+
+```text
+roles/
+├── list.jsp
+├── create.jsp
+├── edit.jsp
+└── permissions.jsp
+```
+
+Provides:
+
+* Role listing
+* Role creation
+* Role editing
+* Role-permission management
+
+---
+
+## 🔐 Admin Permission Management
+
+```text
+permissions/
+├── list.jsp
+├── create.jsp
+├── edit.jsp
+└── view.jsp
+```
+
+Provides:
+
+* Permission listing
+* Permission creation
+* Permission editing
+* Permission details
+
+---
+
+## 📩 Admin Access Requests
+
+```text
+access-request/
+├── list.jsp
+└── view.jsp
+```
+
+Administrators can review access requests and inspect individual request details.
+
+---
+
+## ✅ Admin Approval Management
+
+```text
+approval/
+├── pending.jsp
+├── view.jsp
+└── history.jsp
+```
+
+Provides:
+
+* Pending approvals
+* Approval details
+* Approval history
+
+---
+
+## 📋 Admin Audit Management
+
+```text
+audit/
+├── logs.jsp
+└── view.jsp
+```
+
+Provides:
+
+* Security audit log listing
+* Individual audit-log details
+
+---
+
+## 📊 Admin Reporting
+
+```text
+report/
+├── dashboard.jsp
+├── users.jsp
+├── roles.jsp
+├── permissions.jsp
+└── audit.jsp
+```
+
+Provides reporting interfaces for:
+
+* Users
+* Roles
+* Permissions
+* Audit activity
+* Overall reporting dashboard
+
+---
+
+# 🧩 Shared Frontend Components
+
+Shared pages are stored under:
+
+```text
+WEB-INF/views/common/
+```
+
+Structure:
+
+```text
+common/
+├── error.jsp
+├── access-denied.jsp
+├── not-found.jsp
+└── loading.jsp
+```
+
+### Common Pages
+
+| Page                | Purpose                         |
+| ------------------- | ------------------------------- |
+| `error.jsp`         | General application error page  |
+| `access-denied.jsp` | Unauthorized/access-denied page |
+| `not-found.jsp`     | Resource-not-found page         |
+| `loading.jsp`       | Loading state/interface         |
+
+These pages can be reused across user and administrator flows.
+
+---
+
+# 🎨 Shared UI Layouts
+
+Shared JSP layouts are stored under:
+
+```text
+WEB-INF/views/layouts/
+```
+
+Structure:
+
+```text
+layouts/
+├── user.jsp
+├── admin.jsp
+├── header.jsp
+├── navbar.jsp
+├── sidebar.jsp
+└── footer.jsp
+```
+
+### Layout Responsibilities
+
+| Layout        | Responsibility                     |
+| ------------- | ---------------------------------- |
+| `user.jsp`    | Main user frontend layout          |
+| `admin.jsp`   | Main administrator frontend layout |
+| `header.jsp`  | Shared page header                 |
+| `navbar.jsp`  | Navigation interface               |
+| `sidebar.jsp` | Sidebar navigation                 |
+| `footer.jsp`  | Shared footer                      |
+
+This structure helps avoid duplicating common UI markup across JSP pages.
+
+---
+
+# 🎨 Frontend Assets
+
+Static frontend resources are stored under:
+
+```text
+src/main/webapp/assets/
+```
+
+Structure:
+
+```text
+assets/
+├── css/
+├── js/
+├── images/
+└── icons/
+```
+
+### CSS
+
+```text
+assets/css/
+```
+
+Contains application styling and UI styles.
+
+### JavaScript
+
+```text
+assets/js/
+```
+
+Contains client-side JavaScript functionality.
+
+### Images
+
+```text
+assets/images/
+```
+
+Contains frontend images and visual resources.
+
+### Icons
+
+```text
+assets/icons/
+```
+
+Contains application icons and UI icon resources.
+
+---
+
+# 🗂️ Complete Web Application Structure
+
+The complete JSP web application structure is:
+
+```text
+src/main/webapp/
+│
+├── assets/
+│   ├── css/
+│   ├── js/
+│   ├── images/
+│   └── icons/
+│
+├── META-INF/
+│
+├── WEB-INF/
+│   ├── lib/
+│   │
+│   └── views/
+│       │
+│       ├── user/
+│       │   ├── auth/
+│       │   │   ├── login.jsp
+│       │   │   ├── verify-2fa.jsp
+│       │   │   ├── forgot-password.jsp
+│       │   │   └── reset-password.jsp
+│       │   │
+│       │   ├── dashboard.jsp
+│       │   │
+│       │   ├── profile/
+│       │   │   ├── profile.jsp
+│       │   │   ├── security.jsp
+│       │   │   └── change-password.jsp
+│       │   │
+│       │   └── access-request/
+│       │       ├── create.jsp
+│       │       ├── my-requests.jsp
+│       │       └── view.jsp
+│       │
+│       ├── admin/
+│       │   ├── dashboard.jsp
+│       │   │
+│       │   ├── users/
+│       │   │   ├── list.jsp
+│       │   │   ├── create.jsp
+│       │   │   ├── edit.jsp
+│       │   │   └── view.jsp
+│       │   │
+│       │   ├── roles/
+│       │   │   ├── list.jsp
+│       │   │   ├── create.jsp
+│       │   │   ├── edit.jsp
+│       │   │   └── permissions.jsp
+│       │   │
+│       │   ├── permissions/
+│       │   │   ├── list.jsp
+│       │   │   ├── create.jsp
+│       │   │   ├── edit.jsp
+│       │   │   └── view.jsp
+│       │   │
+│       │   ├── access-request/
+│       │   │   ├── list.jsp
+│       │   │   └── view.jsp
+│       │   │
+│       │   ├── approval/
+│       │   │   ├── pending.jsp
+│       │   │   ├── view.jsp
+│       │   │   └── history.jsp
+│       │   │
+│       │   ├── audit/
+│       │   │   ├── logs.jsp
+│       │   │   └── view.jsp
+│       │   │
+│       │   └── report/
+│       │       ├── dashboard.jsp
+│       │       ├── users.jsp
+│       │       ├── roles.jsp
+│       │       ├── permissions.jsp
+│       │       └── audit.jsp
+│       │
+│       ├── common/
+│       │   ├── error.jsp
+│       │   ├── access-denied.jsp
+│       │   ├── not-found.jsp
+│       │   └── loading.jsp
+│       │
+│       └── layouts/
+│           ├── user.jsp
+│           ├── admin.jsp
+│           ├── header.jsp
+│           ├── navbar.jsp
+│           ├── sidebar.jsp
+│           └── footer.jsp
+│
+└── index.jsp
+```
+
+---
+
 # 🔐 Authentication Architecture
 
 ```mermaid
@@ -104,24 +711,24 @@ flowchart LR
     BACKUP["Verify Backup Code"]
     ACCESS["Authenticated Access"]
     DENIED["Access Denied"]
-    
+
     CLIENT --> LOGIN
     LOGIN --> AUTH
     AUTH --> CRED
     CRED --> CHECK
-    
+
     CHECK -->|No| SESSION
     CHECK -->|No| JWT
     CHECK -->|Yes| TOTP
-    
+
     TOTP -->|Valid| SESSION
     TOTP -->|Valid| JWT
     TOTP -->|Invalid| BACKUP
-    
+
     BACKUP -->|Valid| SESSION
     BACKUP -->|Valid| JWT
     BACKUP -->|Invalid| DENIED
-    
+
     SESSION --> ACCESS
     JWT --> ACCESS
 ```
@@ -140,13 +747,13 @@ sequenceDiagram
     participant F as Authentication Filter
     participant Z as Authorization Filter
     participant R as Protected Resource
-    
+
     C->>A: Login
     A->>A: Validate Credentials
     A->>J: Generate JWT
     J-->>A: Signed JWT
     A-->>C: JWT Token
-    
+
     C->>F: Protected Request + JWT
     F->>F: Validate JWT
     F->>Z: Authenticated Request
@@ -183,38 +790,6 @@ Compatible authenticator applications include:
 | POST   | `/api/v1/auth/2fa/enable` | Verify OTP and enable 2FA        |
 | POST   | `/api/v1/auth/2fa/verify` | Verify OTP during authentication |
 
-## 2FA Architecture
-
-```mermaid
-flowchart TB
-    TWOFA["Two-Factor Authentication"]
-    
-    SETUP["2FA Setup"]
-    SECRET["TOTP Secret"]
-    QR["QR Code"]
-    
-    ENABLE["Enable 2FA"]
-    VERIFY["Verify OTP"]
-    
-    BACKUP["Backup Code Manager"]
-    PROVIDER["TOTP Provider"]
-    SERVICE["TwoFactorAuthService"]
-    RESPONSE["TwoFactorResponse"]
-    
-    TWOFA --> SETUP
-    SETUP --> SECRET
-    SETUP --> QR
-    
-    TWOFA --> ENABLE
-    ENABLE --> SERVICE
-    
-    SERVICE --> PROVIDER
-    SERVICE --> BACKUP
-    SERVICE --> RESPONSE
-    
-    VERIFY --> SERVICE
-```
-
 ## 2FA Components
 
 ```text
@@ -246,27 +821,6 @@ AMS includes cryptographic utilities for authentication, integrity, and secure t
 | HMAC-SHA256 | Integrity and authenticity protection  |
 | JWT signing | Token authentication                   |
 
-```mermaid
-flowchart LR
-    SECURITY["Security Layer"]
-    
-    HASH["HashUtils - SHA-256"]
-    HMAC["HmacUtils - HMAC-SHA256"]
-    JWT["JwtTokenProvider - JWT"]
-    
-    PASSWORD["Password Security"]
-    INTEGRITY["Data Integrity"]
-    TOKEN["Token Security"]
-    
-    SECURITY --> HASH
-    SECURITY --> HMAC
-    SECURITY --> JWT
-    
-    HASH --> PASSWORD
-    HMAC --> INTEGRITY
-    JWT --> TOKEN
-```
-
 ---
 
 # 🛡️ Security Filters
@@ -274,15 +828,15 @@ flowchart LR
 ```mermaid
 flowchart TB
     REQUEST["HTTP Request"]
-    
+
     CORS["CorsFilter"]
     RATE["RateLimitingFilter"]
     HEADERS["SecurityHeadersFilter"]
     AUTHF["AuthenticationFilter"]
     AUTHZF["AuthorizationFilter"]
-    
+
     CONTROLLER["Controller"]
-    
+
     REQUEST --> CORS
     CORS --> RATE
     RATE --> HEADERS
@@ -325,143 +879,12 @@ flowchart LR
     RP["Role-Permission Mapping"]
     PERM["Permission"]
     RESOURCE["Resource Access"]
-    
+
     USER --> UR
     UR --> ROLE
     ROLE --> RP
     RP --> PERM
     PERM --> RESOURCE
-```
-
-## RBAC Example
-
-```mermaid
-flowchart TB
-    ADMIN["Admin"]
-    MANAGER["Manager"]
-    EMPLOYEE["Employee"]
-    
-    ADMIN --> USERS["Manage Users"]
-    ADMIN --> ROLES["Manage Roles"]
-    ADMIN --> PERMISSIONS["Manage Permissions"]
-    
-    MANAGER --> APPROVE["Approve Requests"]
-    MANAGER --> REPORTS["View Reports"]
-    
-    EMPLOYEE --> ACCESS["Assigned Resource Access"]
-```
-
-## RBAC Manager
-
-The security layer contains a dedicated:
-
-```text
-security
-└── rbac
-    └── RBACManager
-```
-
----
-
-# 🔑 Permission Management
-
-AMS supports fine-grained permissions.
-
-### Capabilities
-
-* Create permissions
-* Update permissions
-* Delete permissions
-* Assign permissions to roles
-* Validate permissions
-* Control resource-level access
-
-```mermaid
-flowchart LR
-    ROLE["Role"]
-    PERMISSION["Permission"]
-    RESOURCE["Resource"]
-    ACTION["Action"]
-    ACCESS["Access Decision"]
-    
-    ROLE --> PERMISSION
-    PERMISSION --> RESOURCE
-    RESOURCE --> ACTION
-    ACTION --> ACCESS
-```
-
-A permission can conceptually represent:
-
-```text
-Resource + Action
-```
-
-For example:
-
-```text
-USER + READ
-USER + UPDATE
-ROLE + CREATE
-REPORT + VIEW
-```
-
----
-
-# 📩 Access Request Management
-
-AMS provides controlled access-request workflows.
-
-### Features
-
-* Submit access requests
-* Track request status
-* Request additional permissions
-* Temporary access management
-* Approval-based access provisioning
-
-```mermaid
-flowchart LR
-    EMPLOYEE["Employee"]
-    REQUEST["Access Request"]
-    MANAGER["Manager Review"]
-    ADMIN["Admin Approval"]
-    GRANT["Access Granted"]
-    
-    EMPLOYEE --> REQUEST
-    REQUEST --> MANAGER
-    MANAGER --> ADMIN
-    ADMIN --> GRANT
-```
-
----
-
-# ✅ Approval Workflow
-
-AMS supports approval-based access management.
-
-### Features
-
-* Approve requests
-* Reject requests
-* Approval history
-* Multi-level approval support
-* Controlled access provisioning
-
-```mermaid
-stateDiagram-v2
-    [*] --> Submitted
-    
-    Submitted --> Pending
-    
-    Pending --> Approved
-    Pending --> Rejected
-    
-    Approved --> AccessGranted
-    Rejected --> Closed
-    
-    AccessGranted --> Closed
-    
-    Closed --> [*]
 ```
 
 ---
@@ -470,7 +893,7 @@ stateDiagram-v2
 
 AMS tracks security-sensitive activities for accountability.
 
-### Audited Activities
+Audited activities include:
 
 * Login activities
 * Permission changes
@@ -488,32 +911,10 @@ flowchart LR
     EVENT["Application Event"]
     SERVICE["Audit Service"]
     LOG["Audit Log"]
-    
+
     ACTION --> EVENT
     EVENT --> SERVICE
     SERVICE --> LOG
-```
-
-## Audit Payload
-
-`CreateAuditLogRequest`
-
-```text
-userId
-action
-description
-ipAddress
-```
-
-Example actions:
-
-```text
-SETUP_2FA
-ENABLE_2FA
-VERIFY_2FA
-UPDATE_PERMISSION
-UPDATE_ROLE
-LOGIN
 ```
 
 ---
@@ -525,12 +926,12 @@ AMS provides reporting capabilities for access and security management.
 ```mermaid
 flowchart TB
     REPORT["Reporting System"]
-    
+
     USER_REPORT["User Access Reports"]
     ROLE_REPORT["Role Reports"]
     PERM_REPORT["Permission Reports"]
     AUDIT_REPORT["Audit Reports"]
-    
+
     REPORT --> USER_REPORT
     REPORT --> ROLE_REPORT
     REPORT --> PERM_REPORT
@@ -539,7 +940,7 @@ flowchart TB
 
 ---
 
-# 🔐 Session Management
+# 🔒 Session Management
 
 Session management is isolated inside the security layer.
 
@@ -549,27 +950,6 @@ security
     └── SessionManager
 ```
 
-Conceptually:
-
-```mermaid
-flowchart LR
-    LOGIN["Login"]
-    AUTH["Authentication"]
-    SESSION["SessionManager"]
-    ACTIVE["Active Session"]
-    REQUEST["Protected Request"]
-    VALIDATE["Session Validation"]
-    ACCESS["Authorized Access"]
-    
-    LOGIN --> AUTH
-    AUTH --> SESSION
-    SESSION --> ACTIVE
-    
-    ACTIVE --> REQUEST
-    REQUEST --> VALIDATE
-    VALIDATE --> ACCESS
-```
-
 ---
 
 # 🏗️ High-Level Architecture
@@ -577,26 +957,26 @@ flowchart LR
 ```mermaid
 flowchart TB
     CLIENT["User / Client"]
-    
+
     UI["JSP Web Interface"]
-    
+
     SECURITY["Security Layer"]
-    
+
     CONTROLLER["Controller Layer"]
-    
+
     SERVICE["Service Layer"]
-    
+
     REPOSITORY["Repository Layer"]
-    
+
     DATABASE[("Oracle Database")]
-    
+
     CLIENT <--> UI
     UI --> SECURITY
     SECURITY --> CONTROLLER
     CONTROLLER --> SERVICE
     SERVICE --> REPOSITORY
     REPOSITORY --> DATABASE
-    
+
     subgraph SECURITY_MODULE["Security Layer"]
         AUTH["Authentication"]
         AUTHZ["Authorization"]
@@ -607,7 +987,7 @@ flowchart TB
         FILTER["Security Filters"]
         CRYPTO["Cryptography"]
     end
-    
+
     SECURITY --> SECURITY_MODULE
 ```
 
@@ -624,68 +1004,19 @@ sequenceDiagram
     participant S as Service
     participant R as Repository
     participant DB as Oracle Database
-    
+
     U->>AF: HTTP Request
-    
     AF->>AF: Validate Session / JWT
-    
     AF->>AZ: Authenticated Request
-    
     AZ->>AZ: Check Role & Permission
-    
     AZ->>C: Authorized Request
-    
     C->>S: Execute Business Logic
-    
     S->>R: Fetch / Update Data
-    
     R->>DB: Execute SQL
-    
     DB-->>R: Return Data
-    
     R-->>S: Entity Data
-    
     S-->>C: DTO Response
-    
     C-->>U: HTTP Response
-```
-
----
-
-# 👤 User Management
-
-AMS provides centralized user management.
-
-### Capabilities
-
-* Create users
-* Update users
-* Delete users
-* Activate / deactivate users
-* Assign roles
-* Manage user access
-* Enable / disable 2FA
-* Manage authentication credentials
-
-```mermaid
-flowchart LR
-    ADMIN["Administrator"]
-    
-    CREATE["Create"]
-    UPDATE["Update"]
-    DELETE["Delete"]
-    STATUS["Activate / Deactivate"]
-    ROLE["Assign Roles"]
-    ACCESS["Manage Access"]
-    TWOFA["Manage 2FA"]
-    
-    ADMIN --> CREATE
-    ADMIN --> UPDATE
-    ADMIN --> DELETE
-    ADMIN --> STATUS
-    ADMIN --> ROLE
-    ADMIN --> ACCESS
-    ADMIN --> TWOFA
 ```
 
 ---
@@ -697,7 +1028,7 @@ AMS is organized around independent business modules.
 ```mermaid
 flowchart TB
     AMS["AMS"]
-    
+
     ACCESS["Access Request"]
     APPROVAL["Approval"]
     AUDIT["Audit"]
@@ -706,7 +1037,7 @@ flowchart TB
     REPORT["Report"]
     ROLE["Role"]
     USER["User"]
-    
+
     AMS --> ACCESS
     AMS --> APPROVAL
     AMS --> AUDIT
@@ -749,7 +1080,7 @@ This structure supports:
 ```mermaid
 flowchart TB
     SECURITY["Security"]
-    
+
     AUTHN["Authentication"]
     AUTHZ["Authorization"]
     CRYPTO["Cryptography"]
@@ -758,7 +1089,7 @@ flowchart TB
     RBAC["RBAC"]
     SESSION["Session Management"]
     TWOFA["Two-Factor Authentication"]
-    
+
     SECURITY --> AUTHN
     SECURITY --> AUTHZ
     SECURITY --> CRYPTO
@@ -767,30 +1098,11 @@ flowchart TB
     SECURITY --> RBAC
     SECURITY --> SESSION
     SECURITY --> TWOFA
-    
-    CRYPTO --> HASH["HashUtils"]
-    CRYPTO --> HMAC["HmacUtils"]
-    CRYPTO --> JWT_CRYPTO["JwtTokenProvider"]
-    
-    FILTER --> AF["AuthenticationFilter"]
-    FILTER --> AZ["AuthorizationFilter"]
-    FILTER --> CORS["CorsFilter"]
-    FILTER --> RATE["RateLimitingFilter"]
-    FILTER --> HEADERS["SecurityHeadersFilter"]
-    
-    RBAC --> RBACM["RBACManager"]
-    
-    SESSION --> SM["SessionManager"]
-    
-    TWOFA --> BCM["BackupCodeManager"]
-    TWOFA --> TOTP_P["TOTPProvider"]
-    TWOFA --> TFAS["TwoFactorAuthService"]
-    TWOFA --> TFR["TwoFactorResponse"]
 ```
 
 ---
 
-# 🗂️ Project Structure
+# 🗂️ Backend Project Structure
 
 ```text
 com.ams
@@ -864,221 +1176,6 @@ AUDIT_LOG
 PASSWORD_RESET_TOKEN
 ```
 
-## Entity Relationship Diagram
-
-```mermaid
-erDiagram
-    USERS ||--o{ USER_ROLES : has
-    ROLES ||--o{ USER_ROLES : assigned
-    ROLES ||--o{ ROLE_PERMISSIONS : contains
-    PERMISSIONS ||--o{ ROLE_PERMISSIONS : grants
-    
-    USERS ||--o{ ACCESS_REQUEST : creates
-    ACCESS_REQUEST ||--o{ APPROVAL : has
-    
-    USERS ||--o{ AUDIT_LOG : generates
-    
-    USERS {
-        number id PK
-        varchar2 username
-        varchar2 email
-        varchar2 password
-        number is_2fa_enabled
-        varchar2 two_factor_secret
-        varchar2 status
-        timestamp created_at
-    }
-    
-    ROLES {
-        number id PK
-        varchar2 role_name
-        varchar2 status
-    }
-    
-    PERMISSIONS {
-        number id PK
-        varchar2 permission_name
-        varchar2 resource
-        varchar2 action
-    }
-    
-    USER_ROLES {
-        number user_id FK
-        number role_id FK
-    }
-    
-    ROLE_PERMISSIONS {
-        number role_id FK
-        number permission_id FK
-    }
-    
-    ACCESS_REQUEST {
-        number id PK
-        number user_id FK
-        varchar2 status
-        timestamp created_at
-    }
-    
-    APPROVAL {
-        number id PK
-        number access_request_id FK
-        number approver_id FK
-        varchar2 status
-        timestamp created_at
-    }
-    
-    AUDIT_LOG {
-        number id PK
-        number user_id FK
-        varchar2 action
-        varchar2 resource
-        varchar2 details
-        timestamp created_at
-    }
-```
-
----
-
-# 🗃️ Database Migration
-
-AMS uses version-based database migrations.
-
-```text
-db.migration
-
-├── V1__...
-├── V2__...
-├── V3__...
-├── V4__...
-├── V5__...
-├── V6__...
-├── V7__...
-├── V8__...
-├── V9__...
-└── V10__...
-```
-
-The versioned migration structure provides controlled database-schema evolution for Oracle Database.
-
----
-
-# 🏥 Real-World Applications
-
-## Healthcare Authorization
-
-```mermaid
-flowchart LR
-    HOSPITAL["Hospital System"]
-    
-    DOCTOR["Doctor"]
-    NURSE["Nurse"]
-    RECEPTION["Receptionist"]
-    ADMIN["Admin"]
-    
-    PATIENT["Patient Records"]
-    PRESCRIPTION["Prescription"]
-    APPOINTMENT["Appointments"]
-    ACCESS["System Access"]
-    
-    HOSPITAL --> DOCTOR
-    HOSPITAL --> NURSE
-    HOSPITAL --> RECEPTION
-    HOSPITAL --> ADMIN
-    
-    DOCTOR --> PATIENT
-    DOCTOR --> PRESCRIPTION
-    
-    NURSE --> PATIENT
-    
-    RECEPTION --> APPOINTMENT
-    
-    ADMIN --> ACCESS
-```
-
-AMS can act as an authorization layer where different healthcare staff members require different access levels.
-
----
-
-## 🏢 Enterprise Employee Access Management
-
-Organizations can manage:
-
-* Employee accounts
-* Department access
-* Internal applications
-* Security policies
-* Application permissions
-
-```mermaid
-flowchart LR
-    ORG["Organization"]
-    
-    EMP["Employees"]
-    DEPT["Departments"]
-    APPS["Internal Applications"]
-    POLICIES["Security Policies"]
-    PERMISSIONS_ORG["Permissions"]
-    
-    ORG --> EMP
-    ORG --> DEPT
-    ORG --> APPS
-    ORG --> POLICIES
-    
-    POLICIES --> PERMISSIONS_ORG
-    PERMISSIONS_ORG --> APPS
-```
-
----
-
-## 💻 Application Authorization Service
-
-AMS can operate as an authorization layer for existing applications.
-
-```mermaid
-flowchart LR
-    CLIENT["Client Application"]
-    APP["Application Layer"]
-    AMS["AMS Authorization Layer"]
-    RESOURCE["Protected Resource"]
-    
-    CLIENT --> APP
-    APP --> AMS
-    AMS --> RESOURCE
-```
-
----
-
-## ☁️ SaaS Authorization Platform
-
-AMS can be extended into a multi-tenant authorization platform.
-
-```mermaid
-flowchart TB
-    AMS["AMS Platform"]
-    
-    COMPANY_A["Company A"]
-    COMPANY_B["Company B"]
-    
-    A_USERS["Users"]
-    A_ROLES["Roles"]
-    A_PERMISSIONS["Permissions"]
-    
-    B_USERS["Users"]
-    B_ROLES["Roles"]
-    B_PERMISSIONS["Permissions"]
-    
-    AMS --> COMPANY_A
-    AMS --> COMPANY_B
-    
-    COMPANY_A --> A_USERS
-    COMPANY_A --> A_ROLES
-    COMPANY_A --> A_PERMISSIONS
-    
-    COMPANY_B --> B_USERS
-    COMPANY_B --> B_ROLES
-    COMPANY_B --> B_PERMISSIONS
-```
-
 ---
 
 # 🛠️ Technologies
@@ -1090,17 +1187,18 @@ flowchart TB
 * JSP
 * JDBC
 
-## Database
-
-* Oracle Database
-* Oracle JDBC Driver
-
 ## Frontend
 
+* JSP
 * HTML
 * CSS
 * JavaScript
 * Bootstrap
+
+## Database
+
+* Oracle Database
+* Oracle JDBC Driver
 
 ## Security
 
@@ -1140,7 +1238,7 @@ Install and configure an Oracle Database instance.
 
 Create a dedicated Oracle user/schema for AMS.
 
-For example:
+Example:
 
 ```sql
 CREATE USER ams_user IDENTIFIED BY password;
@@ -1148,7 +1246,9 @@ CREATE USER ams_user IDENTIFIED BY password;
 GRANT CONNECT, RESOURCE TO ams_user;
 ```
 
-> The exact privileges should be adjusted according to the Oracle environment and deployment requirements.
+The exact privileges should be adjusted according to the Oracle environment and deployment requirements.
+
+---
 
 ## 3. Configure Database Connection
 
@@ -1166,11 +1266,9 @@ db.username=ams_user
 db.password=password
 ```
 
-The connection URL may vary depending on the Oracle installation and service name.
+---
 
 ## 4. Configure Oracle JDBC Driver
-
-The project requires the Oracle JDBC driver.
 
 Example Maven dependency:
 
@@ -1184,6 +1282,8 @@ Example Maven dependency:
 
 Use the JDBC driver version compatible with the Java version and Oracle environment used by the project.
 
+---
+
 ## 5. Run Database Migration
 
 Execute:
@@ -1193,6 +1293,8 @@ MigrationRunner.java
 ```
 
 The versioned migration scripts will create and update the required Oracle database schema.
+
+---
 
 ## 6. Configure Application
 
@@ -1205,6 +1307,9 @@ Verify:
 * Security configuration
 * Session configuration
 * 2FA configuration
+* Frontend/JSP configuration
+
+---
 
 ## 7. Deploy
 
@@ -1237,31 +1342,6 @@ The project follows:
 * Feature-Based Architecture
 * RBAC Pattern
 
-```mermaid
-flowchart LR
-    PRINCIPLES["Design Principles"]
-    
-    SOLID["SOLID"]
-    CLEAN["Clean Code"]
-    SOC["Separation of Concerns"]
-    REPOSITORY["Repository Pattern"]
-    DTO["DTO Pattern"]
-    MAPPER["Mapper Pattern"]
-    LAYERED["Layered Architecture"]
-    FEATURE["Feature-Based Architecture"]
-    RBAC["RBAC"]
-    
-    PRINCIPLES --> SOLID
-    PRINCIPLES --> CLEAN
-    PRINCIPLES --> SOC
-    PRINCIPLES --> REPOSITORY
-    PRINCIPLES --> DTO
-    PRINCIPLES --> MAPPER
-    PRINCIPLES --> LAYERED
-    PRINCIPLES --> FEATURE
-    PRINCIPLES --> RBAC
-```
-
 ---
 
 # 🚀 Scalability Roadmap
@@ -1290,21 +1370,21 @@ Future improvements include:
 flowchart LR
     CLIENT["Client Applications"]
     GATEWAY["API Gateway"]
-    
+
     IAM["Identity & Authorization Service"]
     USER["User Service"]
     PERMISSION["Permission Service"]
     AUDIT["Audit Service"]
-    
+
     DB[("Oracle Database")]
-    
+
     CLIENT --> GATEWAY
-    
+
     GATEWAY --> IAM
     GATEWAY --> USER
     GATEWAY --> PERMISSION
     GATEWAY --> AUDIT
-    
+
     IAM --> DB
     USER --> DB
     PERMISSION --> DB
@@ -1318,36 +1398,37 @@ flowchart LR
 ```mermaid
 graph TD
     AMS["AMS Platform"]
-    
+
     SIM["Secure Identity Management"]
     SA["Strong Authentication"]
     MFA["Multi-Factor Authentication"]
     FGA["Fine-Grained Authorization"]
     RBAC_GOAL["Role-Based Access Control"]
-    
+
     SAud["Security Auditing"]
     CAW["Controlled Access Workflows"]
-    
+
     MD["Modular Development"]
     Maint["Maintainability"]
     ES["Enterprise Scalability"]
-    
+
     RA["Reusable Authorization"]
     FMM["Future Microservice Migration"]
-    
+
     AMS --> SIM
     SIM --> SA
     SA --> MFA
+
     SIM --> FGA
     FGA --> RBAC_GOAL
-    
+
     AMS --> SAud
     SAud --> CAW
-    
+
     AMS --> MD
     MD --> Maint
     MD --> ES
-    
+
     AMS --> RA
     RA --> FMM
 ```
@@ -1359,21 +1440,21 @@ graph TD
 ```mermaid
 flowchart TD
     REQUEST["Incoming Request"]
-    
+
     AUTHENTICATION["Authentication"]
     ROLE["Role Validation"]
     PERMISSION["Permission Validation"]
-    
+
     DECISION{"Access Allowed?"}
-    
+
     ALLOW["Allow Access"]
     DENY["Deny Access"]
-    
+
     REQUEST --> AUTHENTICATION
     AUTHENTICATION --> ROLE
     ROLE --> PERMISSION
     PERMISSION --> DECISION
-    
+
     DECISION -->|Yes| ALLOW
     DECISION -->|No| DENY
 ```
@@ -1402,46 +1483,50 @@ flowchart TD
 ```mermaid
 flowchart TB
     CLIENT["Client"]
-    
+
+    UI["JSP Web Interface"]
+
     AUTHENTICATION["Authentication"]
     TWOFA["2FA"]
     SESSION["Session"]
     JWT["JWT"]
-    
+
     AUTHORIZATION["Authorization"]
     RBAC["RBAC"]
     PERMISSION["Permissions"]
-    
+
     GOVERNANCE["Access Governance"]
     REQUEST["Access Request"]
     APPROVAL["Approval"]
-    
+
     AUDITING["Auditing & Reporting"]
     AUDIT["Audit"]
     REPORT["Reports"]
-    
+
     DATABASE[("Oracle Database")]
-    
-    CLIENT --> AUTHENTICATION
-    
+
+    CLIENT --> UI
+
+    UI --> AUTHENTICATION
+
     AUTHENTICATION --> TWOFA
     AUTHENTICATION --> SESSION
     AUTHENTICATION --> JWT
-    
+
     SESSION --> AUTHORIZATION
     JWT --> AUTHORIZATION
-    
+
     AUTHORIZATION --> RBAC
     RBAC --> PERMISSION
-    
+
     PERMISSION --> GOVERNANCE
     GOVERNANCE --> REQUEST
     REQUEST --> APPROVAL
-    
+
     APPROVAL --> AUDITING
     AUDITING --> AUDIT
     AUDITING --> REPORT
-    
+
     AUTHENTICATION --> DATABASE
     AUTHORIZATION --> DATABASE
     GOVERNANCE --> DATABASE
