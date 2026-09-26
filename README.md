@@ -2,7 +2,7 @@
 
 > **Enterprise-oriented Identity, Authentication & Authorization Platform**
 
-A modular Java-based Authorization Management System built with **Java Servlet, JSP, JDBC, and Oracle Database**, providing authentication, JWT, session security, TOTP-based 2FA, RBAC, fine-grained permissions, access-request workflows, approval management, audit logging, reporting, and a structured JSP-based user and administrator frontend.
+A modular Java-based Authorization Management System built with **Java Servlet, JSP, JDBC, Oracle Database, JavaScript, and Bootstrap 5**, providing authentication, JWT, session security, TOTP-based 2FA, RBAC, fine-grained permissions, access-request workflows, approval management, audit logging, reporting, and a **JavaScript-based Single Page Application (SPA) frontend**.
 
 ---
 
@@ -30,8 +30,8 @@ The system brings together:
 * 🌐 CORS protection
 * 🛡️ Security headers
 * 🔏 Cryptographic utilities
-* 🖥️ JSP-based user frontend
-* ⚙️ JSP-based administrator frontend
+* 🖥️ JSP-based SPA frontend
+* ⚙️ User and administrator interfaces
 
 The platform can be integrated with healthcare systems, ERP applications, SaaS platforms, enterprise applications, and internal management systems.
 
@@ -54,7 +54,7 @@ flowchart TB
     APPROVAL["Approval Workflows"]
     AUDIT["Security Auditing"]
     REPORT["Reporting"]
-    UI["JSP Web Interface"]
+    UI["Web Interface"]
 
     AMS --> USER
     AMS --> ROLE
@@ -199,102 +199,323 @@ stateDiagram-v2
 
 # 🖥️ Frontend Architecture
 
-AMS provides a structured **JSP-based web frontend** divided into:
+AMS uses a **JSP-based Single Page Application (SPA) architecture** enhanced with modern JavaScript and Bootstrap.
 
-1. **User Frontend**
-2. **Admin Frontend**
-3. **Shared Components**
-4. **Shared Layouts**
+The frontend combines:
 
-The frontend follows a feature-oriented JSP organization so that user-facing and administrator-facing interfaces remain separated.
+* JSP
+* HTML5
+* CSS3
+* JavaScript ES6+
+* Bootstrap 5
+* Fetch API
+* Client-side routing
+* DOM-based rendering
+
+The backend remains responsible for authentication, authorization, business logic, database operations, and API responses.
+
+The SPA frontend communicates with the existing backend through HTTP requests without requiring changes to the backend architecture.
 
 ```mermaid
 flowchart TB
-    APP["AMS Web Application"]
+    BROWSER["Browser"]
 
-    USER["User Frontend"]
-    ADMIN["Admin Frontend"]
-    COMMON["Common Pages"]
-    LAYOUT["Shared Layouts"]
-    ASSETS["Frontend Assets"]
+    SHELL["JSP SPA Shell"]
+    ROUTER["JavaScript Router"]
+    UI["Dynamic UI / DOM"]
+    API["Fetch API"]
 
-    APP --> USER
-    APP --> ADMIN
-    APP --> COMMON
-    APP --> LAYOUT
-    APP --> ASSETS
+    BACKEND["Existing Java Servlet Backend"]
+    SECURITY["Security Layer"]
+    SERVICE["Service Layer"]
+    REPOSITORY["Repository Layer"]
+    DB[("Oracle Database")]
+
+    BROWSER --> SHELL
+    SHELL --> ROUTER
+    ROUTER --> UI
+    UI --> API
+
+    API --> BACKEND
+    BACKEND --> SECURITY
+    SECURITY --> SERVICE
+    SERVICE --> REPOSITORY
+    REPOSITORY --> DB
 ```
 
 ---
 
-## 👤 User Frontend
+# 🧭 SPA Architecture
 
-The user frontend contains functionality available to authenticated application users.
+The application uses a **single application shell** after authentication.
+
+The main application is loaded through:
 
 ```text
-WEB-INF/views/user/
+WEB-INF/views/app.jsp
+```
+
+JavaScript controls navigation and dynamically displays the required frontend view.
+
+Example client-side routes:
+
+```text
+#/dashboard
+#/profile
+#/security
+#/change-password
+#/access-requests
+#/users
+#/roles
+#/permissions
+#/approvals
+#/audit
+#/reports
+```
+
+Navigation does not require a complete browser page reload.
+
+```mermaid
+flowchart LR
+    APP["app.jsp"]
+
+    ROUTER["JavaScript Router"]
+
+    DASH["Dashboard"]
+    PROFILE["Profile"]
+    USERS["Users"]
+    ROLES["Roles"]
+    PERM["Permissions"]
+    REQUEST["Access Requests"]
+    APPROVAL["Approvals"]
+    AUDIT["Audit"]
+    REPORT["Reports"]
+
+    APP --> ROUTER
+
+    ROUTER --> DASH
+    ROUTER --> PROFILE
+    ROUTER --> USERS
+    ROUTER --> ROLES
+    ROUTER --> PERM
+    ROUTER --> REQUEST
+    ROUTER --> APPROVAL
+    ROUTER --> AUDIT
+    ROUTER --> REPORT
+```
+
+---
+
+# 📁 Frontend Source Structure
+
+The complete frontend structure is:
+
+```text
+src/main/webapp/
 │
-├── auth/
-│   ├── login.jsp
-│   ├── verify-2fa.jsp
-│   ├── forgot-password.jsp
-│   └── reset-password.jsp
+├── assets/
+│   ├── css/
+│   │   ├── app.css
+│   │   ├── auth.css
+│   │   ├── dashboard.css
+│   │   └── admin.css
+│   │
+│   ├── js/
+│   │   ├── common/
+│   │   │   ├── router.js
+│   │   │   ├── api-client.js
+│   │   │   ├── auth.js
+│   │   │   ├── notifications.js
+│   │   │   ├── modal.js
+│   │   │   └── utils.js
+│   │   │
+│   │   ├── auth/
+│   │   │   ├── login.js
+│   │   │   ├── two-factor.js
+│   │   │   ├── forgot-password.js
+│   │   │   └── reset-password.js
+│   │   │
+│   │   ├── user/
+│   │   │   ├── dashboard.js
+│   │   │   ├── profile.js
+│   │   │   ├── security.js
+│   │   │   ├── change-password.js
+│   │   │   └── access-request.js
+│   │   │
+│   │   └── admin/
+│   │       ├── dashboard.js
+│   │       ├── users.js
+│   │       ├── roles.js
+│   │       ├── permissions.js
+│   │       ├── access-requests.js
+│   │       ├── approvals.js
+│   │       ├── audit.js
+│   │       └── reports.js
+│   │
+│   ├── images/
+│   └── icons/
 │
+├── META-INF/
+│
+├── WEB-INF/
+│   ├── lib/
+│   │
+│   └── views/
+│       ├── app.jsp
+│       ├── login.jsp
+│       │
+│       └── partials/
+│           ├── dashboard.jsp
+│           ├── profile.jsp
+│           ├── security.jsp
+│           ├── change-password.jsp
+│           ├── access-request.jsp
+│           ├── users.jsp
+│           ├── roles.jsp
+│           ├── permissions.jsp
+│           ├── access-requests.jsp
+│           ├── approvals.jsp
+│           ├── audit.jsp
+│           └── reports.jsp
+│
+└── index.jsp
+```
+
+---
+
+# 🧩 SPA Frontend Components
+
+## Application Shell
+
+```text
+WEB-INF/views/app.jsp
+```
+
+The application shell provides the main authenticated application structure.
+
+It contains:
+
+* Navigation
+* Sidebar
+* Header
+* Main content container
+* Footer
+* Global UI containers
+* JavaScript application entry point
+
+The main content area is controlled by the JavaScript router.
+
+---
+
+## 🔐 Authentication Page
+
+```text
+WEB-INF/views/login.jsp
+```
+
+The login interface is responsible for:
+
+* Username/email input
+* Password input
+* Login submission
+* Client-side validation
+* Authentication request
+* Authentication error handling
+* Navigation into the authenticated SPA
+
+Additional authentication functionality is implemented through:
+
+```text
+assets/js/auth/
+├── login.js
+├── two-factor.js
+├── forgot-password.js
+└── reset-password.js
+```
+
+---
+
+# 👤 User Frontend
+
+User functionality is implemented as SPA routes and JavaScript modules.
+
+```text
+assets/js/user/
+├── dashboard.js
+├── profile.js
+├── security.js
+├── change-password.js
+└── access-request.js
+```
+
+Corresponding JSP partial views:
+
+```text
+WEB-INF/views/partials/
 ├── dashboard.jsp
-│
-├── profile/
-│   ├── profile.jsp
-│   ├── security.jsp
-│   └── change-password.jsp
-│
-└── access-request/
-    ├── create.jsp
-    ├── my-requests.jsp
-    └── view.jsp
+├── profile.jsp
+├── security.jsp
+├── change-password.jsp
+└── access-request.jsp
 ```
 
-### User Frontend Responsibilities
-
-#### Authentication
-
-```text
-login.jsp
-verify-2fa.jsp
-forgot-password.jsp
-reset-password.jsp
-```
-
-Responsible for the user authentication and account-recovery interface.
+### User Features
 
 #### Dashboard
 
 ```text
-dashboard.jsp
-```
-
-Provides the main authenticated-user interface.
-
-#### Profile & Security
-
-```text
-profile/profile.jsp
-profile/security.jsp
-profile/change-password.jsp
+#/dashboard
 ```
 
 Provides:
 
+* User overview
+* Account information
+* Access information
+* Security status
+* Application activity
+
+#### Profile
+
+```text
+#/profile
+```
+
+Provides:
+
+* Profile information
+* Account details
 * Profile management
+
+#### Security
+
+```text
+#/security
+```
+
+Provides:
+
+* 2FA status
 * Security settings
-* Password management
-* Account security operations
+* Authentication-related information
+
+#### Change Password
+
+```text
+#/change-password
+```
+
+Provides:
+
+* Current password validation
+* New password entry
+* Password confirmation
+* Password update
 
 #### Access Requests
 
 ```text
-access-request/create.jsp
-access-request/my-requests.jsp
-access-request/view.jsp
+#/access-requests
 ```
 
 Provides:
@@ -302,68 +523,54 @@ Provides:
 * Creating access requests
 * Viewing submitted requests
 * Tracking request status
-* Viewing individual request details
+* Viewing request details
 
 ---
 
 # ⚙️ Admin Frontend
 
-The administrator frontend provides management interfaces for users, roles, permissions, access requests, approvals, auditing, and reports.
+Administrator functionality is implemented through dedicated JavaScript modules and SPA views.
 
 ```text
-WEB-INF/views/admin/
-│
+assets/js/admin/
+├── dashboard.js
+├── users.js
+├── roles.js
+├── permissions.js
+├── access-requests.js
+├── approvals.js
+├── audit.js
+└── reports.js
+```
+
+Corresponding JSP partial views:
+
+```text
+WEB-INF/views/partials/
 ├── dashboard.jsp
-│
-├── users/
-│   ├── list.jsp
-│   ├── create.jsp
-│   ├── edit.jsp
-│   └── view.jsp
-│
-├── roles/
-│   ├── list.jsp
-│   ├── create.jsp
-│   ├── edit.jsp
-│   └── permissions.jsp
-│
-├── permissions/
-│   ├── list.jsp
-│   ├── create.jsp
-│   ├── edit.jsp
-│   └── view.jsp
-│
-├── access-request/
-│   ├── list.jsp
-│   └── view.jsp
-│
-├── approval/
-│   ├── pending.jsp
-│   ├── view.jsp
-│   └── history.jsp
-│
-├── audit/
-│   ├── logs.jsp
-│   └── view.jsp
-│
-└── report/
-    ├── dashboard.jsp
-    ├── users.jsp
-    ├── roles.jsp
-    ├── permissions.jsp
-    └── audit.jsp
+├── users.jsp
+├── roles.jsp
+├── permissions.jsp
+├── access-requests.jsp
+├── approvals.jsp
+├── audit.jsp
+└── reports.jsp
 ```
 
 ---
 
 ## 👥 Admin User Management
 
+Route:
+
 ```text
-users/
-├── list.jsp
-├── create.jsp
-├── edit.jsp
-└── view.jsp
+#/users
+```
+
+JavaScript:
+
+```text
+assets/js/admin/users.js
 ```
 
 Provides interfaces for:
@@ -373,17 +580,22 @@ Provides interfaces for:
 * Editing users
 * Viewing user details
 * Managing user accounts
+* Managing user status
 
 ---
 
 ## 👥 Admin Role Management
 
+Route:
+
 ```text
-roles/
-├── list.jsp
-├── create.jsp
-├── edit.jsp
-└── permissions.jsp
+#/roles
+```
+
+JavaScript:
+
+```text
+assets/js/admin/roles.js
 ```
 
 Provides:
@@ -397,12 +609,16 @@ Provides:
 
 ## 🔐 Admin Permission Management
 
+Route:
+
 ```text
-permissions/
-├── list.jsp
-├── create.jsp
-├── edit.jsp
-└── view.jsp
+#/permissions
+```
+
+JavaScript:
+
+```text
+assets/js/admin/permissions.js
 ```
 
 Provides:
@@ -411,62 +627,91 @@ Provides:
 * Permission creation
 * Permission editing
 * Permission details
+* Permission management
 
 ---
 
 ## 📩 Admin Access Requests
 
+Route:
+
 ```text
-access-request/
-├── list.jsp
-└── view.jsp
+#/access-requests
 ```
 
-Administrators can review access requests and inspect individual request details.
+JavaScript:
+
+```text
+assets/js/admin/access-requests.js
+```
+
+Provides:
+
+* Access-request listing
+* Request filtering
+* Request details
+* Request status management
 
 ---
 
 ## ✅ Admin Approval Management
 
+Route:
+
 ```text
-approval/
-├── pending.jsp
-├── view.jsp
-└── history.jsp
+#/approvals
+```
+
+JavaScript:
+
+```text
+assets/js/admin/approvals.js
 ```
 
 Provides:
 
 * Pending approvals
 * Approval details
+* Approval actions
 * Approval history
 
 ---
 
 ## 📋 Admin Audit Management
 
+Route:
+
 ```text
-audit/
-├── logs.jsp
-└── view.jsp
+#/audit
+```
+
+JavaScript:
+
+```text
+assets/js/admin/audit.js
 ```
 
 Provides:
 
-* Security audit log listing
-* Individual audit-log details
+* Security audit-log listing
+* Audit filtering
+* Individual audit details
+* Security activity inspection
 
 ---
 
 ## 📊 Admin Reporting
 
+Route:
+
 ```text
-report/
-├── dashboard.jsp
-├── users.jsp
-├── roles.jsp
-├── permissions.jsp
-└── audit.jsp
+#/reports
+```
+
+JavaScript:
+
+```text
+assets/js/admin/reports.js
 ```
 
 Provides reporting interfaces for:
@@ -475,228 +720,320 @@ Provides reporting interfaces for:
 * Roles
 * Permissions
 * Audit activity
-* Overall reporting dashboard
+* Overall reporting
 
 ---
 
-# 🧩 Shared Frontend Components
+# 🧩 Shared Frontend JavaScript
 
-Shared pages are stored under:
-
-```text
-WEB-INF/views/common/
-```
-
-Structure:
+Shared frontend functionality is organized under:
 
 ```text
-common/
-├── error.jsp
-├── access-denied.jsp
-├── not-found.jsp
-└── loading.jsp
+assets/js/common/
 ```
 
-### Common Pages
+## Router
 
-| Page                | Purpose                         |
-| ------------------- | ------------------------------- |
-| `error.jsp`         | General application error page  |
-| `access-denied.jsp` | Unauthorized/access-denied page |
-| `not-found.jsp`     | Resource-not-found page         |
-| `loading.jsp`       | Loading state/interface         |
+```text
+router.js
+```
 
-These pages can be reused across user and administrator flows.
+Responsible for:
+
+* Client-side navigation
+* Route detection
+* View switching
+* Browser history handling
+* SPA navigation state
+
+Example routes:
+
+```text
+#/dashboard
+#/profile
+#/users
+#/roles
+#/permissions
+#/audit
+```
 
 ---
 
-# 🎨 Shared UI Layouts
-
-Shared JSP layouts are stored under:
+## API Client
 
 ```text
-WEB-INF/views/layouts/
+api-client.js
 ```
 
-Structure:
+Provides centralized HTTP communication with the existing backend.
 
-```text
-layouts/
-├── user.jsp
-├── admin.jsp
-├── header.jsp
-├── navbar.jsp
-├── sidebar.jsp
-└── footer.jsp
-```
+Responsibilities include:
 
-### Layout Responsibilities
+* GET requests
+* POST requests
+* PUT requests
+* DELETE requests
+* Request headers
+* Authentication handling
+* JSON response processing
+* Error handling
 
-| Layout        | Responsibility                     |
-| ------------- | ---------------------------------- |
-| `user.jsp`    | Main user frontend layout          |
-| `admin.jsp`   | Main administrator frontend layout |
-| `header.jsp`  | Shared page header                 |
-| `navbar.jsp`  | Navigation interface               |
-| `sidebar.jsp` | Sidebar navigation                 |
-| `footer.jsp`  | Shared footer                      |
-
-This structure helps avoid duplicating common UI markup across JSP pages.
+The API client prevents individual modules from duplicating HTTP request logic.
 
 ---
 
-# 🎨 Frontend Assets
-
-Static frontend resources are stored under:
+## Authentication
 
 ```text
-src/main/webapp/assets/
+auth.js
 ```
 
-Structure:
+Responsible for frontend authentication state and authentication-related UI behavior.
+
+---
+
+## Notifications
 
 ```text
-assets/
-├── css/
-├── js/
-├── images/
-└── icons/
+notifications.js
 ```
 
-### CSS
+Provides reusable UI notifications such as:
+
+* Success messages
+* Error messages
+* Warning messages
+* Informational messages
+
+---
+
+## Modal
+
+```text
+modal.js
+```
+
+Provides reusable Bootstrap modal behavior for:
+
+* Confirmation dialogs
+* Form dialogs
+* Detail views
+* Destructive-action confirmation
+
+---
+
+## Utilities
+
+```text
+utils.js
+```
+
+Contains reusable frontend helper functions.
+
+---
+
+# 🎨 Frontend CSS
+
+Custom CSS is organized under:
+
+```text
+assets/css/
+├── app.css
+├── auth.css
+├── dashboard.css
+└── admin.css
+```
+
+### `app.css`
+
+Contains:
+
+* Global styles
+* Typography
+* Shared layout styles
+* Common utility styles
+* Global application components
+
+### `auth.css`
+
+Contains:
+
+* Login styling
+* Authentication forms
+* 2FA interface
+* Password recovery interface
+
+### `dashboard.css`
+
+Contains:
+
+* Dashboard layouts
+* Statistic cards
+* Dashboard widgets
+* User dashboard styling
+
+### `admin.css`
+
+Contains:
+
+* Admin layouts
+* Data tables
+* Management interfaces
+* Admin-specific components
+
+---
+
+# 🎨 Bootstrap 5
+
+Bootstrap 5 is used for:
+
+* Responsive layouts
+* Navigation
+* Forms
+* Buttons
+* Cards
+* Tables
+* Modals
+* Alerts
+* Dropdowns
+* Pagination
+* Responsive utilities
+
+Custom project styling is maintained separately under:
 
 ```text
 assets/css/
 ```
 
-Contains application styling and UI styles.
-
-### JavaScript
-
-```text
-assets/js/
-```
-
-Contains client-side JavaScript functionality.
-
-### Images
-
-```text
-assets/images/
-```
-
-Contains frontend images and visual resources.
-
-### Icons
-
-```text
-assets/icons/
-```
-
-Contains application icons and UI icon resources.
-
 ---
 
-# 🗂️ Complete Web Application Structure
+# 🔄 Frontend Request Flow
 
-The complete JSP web application structure is:
+The SPA frontend communicates with the existing backend through Fetch API.
 
-```text
-src/main/webapp/
-│
-├── assets/
-│   ├── css/
-│   ├── js/
-│   ├── images/
-│   └── icons/
-│
-├── META-INF/
-│
-├── WEB-INF/
-│   ├── lib/
-│   │
-│   └── views/
-│       │
-│       ├── user/
-│       │   ├── auth/
-│       │   │   ├── login.jsp
-│       │   │   ├── verify-2fa.jsp
-│       │   │   ├── forgot-password.jsp
-│       │   │   └── reset-password.jsp
-│       │   │
-│       │   ├── dashboard.jsp
-│       │   │
-│       │   ├── profile/
-│       │   │   ├── profile.jsp
-│       │   │   ├── security.jsp
-│       │   │   └── change-password.jsp
-│       │   │
-│       │   └── access-request/
-│       │       ├── create.jsp
-│       │       ├── my-requests.jsp
-│       │       └── view.jsp
-│       │
-│       ├── admin/
-│       │   ├── dashboard.jsp
-│       │   │
-│       │   ├── users/
-│       │   │   ├── list.jsp
-│       │   │   ├── create.jsp
-│       │   │   ├── edit.jsp
-│       │   │   └── view.jsp
-│       │   │
-│       │   ├── roles/
-│       │   │   ├── list.jsp
-│       │   │   ├── create.jsp
-│       │   │   ├── edit.jsp
-│       │   │   └── permissions.jsp
-│       │   │
-│       │   ├── permissions/
-│       │   │   ├── list.jsp
-│       │   │   ├── create.jsp
-│       │   │   ├── edit.jsp
-│       │   │   └── view.jsp
-│       │   │
-│       │   ├── access-request/
-│       │   │   ├── list.jsp
-│       │   │   └── view.jsp
-│       │   │
-│       │   ├── approval/
-│       │   │   ├── pending.jsp
-│       │   │   ├── view.jsp
-│       │   │   └── history.jsp
-│       │   │
-│       │   ├── audit/
-│       │   │   ├── logs.jsp
-│       │   │   └── view.jsp
-│       │   │
-│       │   └── report/
-│       │       ├── dashboard.jsp
-│       │       ├── users.jsp
-│       │       ├── roles.jsp
-│       │       ├── permissions.jsp
-│       │       └── audit.jsp
-│       │
-│       ├── common/
-│       │   ├── error.jsp
-│       │   ├── access-denied.jsp
-│       │   ├── not-found.jsp
-│       │   └── loading.jsp
-│       │
-│       └── layouts/
-│           ├── user.jsp
-│           ├── admin.jsp
-│           ├── header.jsp
-│           ├── navbar.jsp
-│           ├── sidebar.jsp
-│           └── footer.jsp
-│
-└── index.jsp
+```mermaid
+sequenceDiagram
+    participant U as Browser
+    participant R as Router
+    participant V as SPA View
+    participant A as API Client
+    participant B as Java Servlet Backend
+    participant DB as Oracle Database
+
+    U->>R: Navigate to SPA route
+    R->>V: Load / display view
+    V->>A: Request data
+    A->>B: HTTP API Request
+    B->>DB: Database Operation
+    DB-->>B: Database Response
+    B-->>A: API Response
+    A-->>V: Parsed Data
+    V-->>U: Update DOM
 ```
 
 ---
 
-# 🔐 Authentication Architecture
+# 🚫 Backend Boundary
+
+The SPA frontend does **not** require changes to the existing backend architecture.
+
+The following backend components remain unchanged:
+
+```text
+Java Servlet
+JDBC
+Oracle Database
+Service Layer
+Repository Layer
+Security Filters
+Authentication
+Authorization
+RBAC
+JWT
+Session Management
+2FA
+Audit
+```
+
+The frontend consumes the existing backend functionality through its existing HTTP interfaces.
+
+```text
+Frontend SPA
+     │
+     │ HTTP / Fetch API
+     ▼
+Existing Backend
+     │
+     ▼
+Existing Database
+```
+
+---
+
+# 🧭 Client-Side Navigation
+
+The frontend uses hash-based navigation to avoid requiring new server-side routes for every SPA screen.
+
+Examples:
+
+```text
+#/dashboard
+#/profile
+#/security
+#/change-password
+#/access-requests
+#/users
+#/roles
+#/permissions
+#/approvals
+#/audit
+#/reports
+```
+
+The browser initially loads the application shell, and JavaScript controls subsequent navigation.
+
+```mermaid
+flowchart LR
+    URL["Browser URL"]
+
+    HASH["Hash Route"]
+
+    ROUTER["JavaScript Router"]
+
+    VIEW["SPA View"]
+
+    DOM["DOM Update"]
+
+    URL --> HASH
+    HASH --> ROUTER
+    ROUTER --> VIEW
+    VIEW --> DOM
+```
+
+---
+
+# 📱 Responsive Design
+
+The frontend is designed to work across:
+
+* Desktop
+* Laptop
+* Tablet
+* Mobile
+
+Bootstrap 5 responsive utilities are combined with custom CSS to provide responsive:
+
+* Navigation
+* Sidebar
+* Forms
+* Tables
+* Cards
+* Dashboards
+* Modals
+
+---
+
+# 🔒 Authentication Architecture
 
 ```mermaid
 flowchart LR
@@ -958,7 +1295,7 @@ security
 flowchart TB
     CLIENT["User / Client"]
 
-    UI["JSP Web Interface"]
+    SPA["JSP + JavaScript SPA"]
 
     SECURITY["Security Layer"]
 
@@ -970,8 +1307,8 @@ flowchart TB
 
     DATABASE[("Oracle Database")]
 
-    CLIENT <--> UI
-    UI --> SECURITY
+    CLIENT <--> SPA
+    SPA --> SECURITY
     SECURITY --> CONTROLLER
     CONTROLLER --> SERVICE
     SERVICE --> REPOSITORY
@@ -998,6 +1335,7 @@ flowchart TB
 ```mermaid
 sequenceDiagram
     participant U as Client
+    participant SPA as JavaScript SPA
     participant AF as Authentication Filter
     participant AZ as Authorization Filter
     participant C as Controller
@@ -1005,7 +1343,8 @@ sequenceDiagram
     participant R as Repository
     participant DB as Oracle Database
 
-    U->>AF: HTTP Request
+    U->>SPA: SPA Navigation / Action
+    SPA->>AF: HTTP API Request
     AF->>AF: Validate Session / JWT
     AF->>AZ: Authenticated Request
     AZ->>AZ: Check Role & Permission
@@ -1016,7 +1355,8 @@ sequenceDiagram
     DB-->>R: Return Data
     R-->>S: Entity Data
     S-->>C: DTO Response
-    C-->>U: HTTP Response
+    C-->>SPA: HTTP Response
+    SPA-->>U: Update DOM
 ```
 
 ---
@@ -1190,10 +1530,12 @@ PASSWORD_RESET_TOKEN
 ## Frontend
 
 * JSP
-* HTML
-* CSS
-* JavaScript
-* Bootstrap
+* HTML5
+* CSS3
+* JavaScript ES6+
+* Bootstrap 5
+* Fetch API
+* Client-side routing
 
 ## Database
 
@@ -1341,6 +1683,39 @@ The project follows:
 * Layered Architecture
 * Feature-Based Architecture
 * RBAC Pattern
+* Modular Frontend Architecture
+
+---
+
+# 🚀 Frontend Development Model
+
+The frontend is developed as a **JavaScript-enhanced JSP SPA**.
+
+Development is organized into:
+
+```text
+1. Application Shell
+        ↓
+2. Global Layout
+        ↓
+3. Router
+        ↓
+4. API Client
+        ↓
+5. Authentication UI
+        ↓
+6. User Modules
+        ↓
+7. Admin Modules
+        ↓
+8. Responsive Design
+        ↓
+9. Validation & Error Handling
+        ↓
+10. UI Polish
+```
+
+The backend API contracts remain the integration boundary.
 
 ---
 
@@ -1348,7 +1723,7 @@ The project follows:
 
 Future improvements include:
 
-* REST API support
+* REST API expansion
 * OAuth 2.0 integration
 * OpenID Connect (OIDC)
 * Spring Boot migration
@@ -1484,7 +1859,7 @@ flowchart TD
 flowchart TB
     CLIENT["Client"]
 
-    UI["JSP Web Interface"]
+    SPA["JSP + JavaScript SPA"]
 
     AUTHENTICATION["Authentication"]
     TWOFA["2FA"]
@@ -1505,9 +1880,9 @@ flowchart TB
 
     DATABASE[("Oracle Database")]
 
-    CLIENT --> UI
+    CLIENT --> SPA
 
-    UI --> AUTHENTICATION
+    SPA --> AUTHENTICATION
 
     AUTHENTICATION --> TWOFA
     AUTHENTICATION --> SESSION
@@ -1552,7 +1927,7 @@ Backend Software Engineer
 
 ### Contact
 
-**GitHub:** [github.com/MotionPrograming](https://github.com/MotionPrograming)
+**GitHub:** [github.com/MotionPrograming](https://github.com/MotionPrograming/AuthorizationManagementSystem)
 
 ---
 
